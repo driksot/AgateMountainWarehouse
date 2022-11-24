@@ -19,4 +19,8 @@
     <ProjectReference Include="..\AgateMountainWarehouse.Infrastructure\AgateMountainWarehouse.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\products\" />
+  </ItemGroup>
+
 </Project>
