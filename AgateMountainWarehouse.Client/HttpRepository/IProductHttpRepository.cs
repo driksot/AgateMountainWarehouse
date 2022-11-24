@@ -1,8 +1,10 @@
-﻿using AgateMountainWarehouse.Client.ViewModels;
+﻿using AgateMountainWarehouse.Application.RequestFeatures;
+using AgateMountainWarehouse.Client.Features;
+using AgateMountainWarehouse.Client.ViewModels;
 
 namespace AgateMountainWarehouse.Client.HttpRepository;
 
 public interface IProductHttpRepository
 {
-    Task<List<ProductViewModel>> GetProducts();
+    Task<PagingResponse<ProductViewModel>> GetProducts(PagingParameters pagingParameters);
 }

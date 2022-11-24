@@ -1,8 +1,9 @@
-﻿using AgateMountainWarehouse.Domain.Entities;
+﻿using AgateMountainWarehouse.Application.RequestFeatures;
+using AgateMountainWarehouse.Domain.Entities;
 
 namespace AgateMountainWarehouse.Application.Interfaces;
 
 public interface IProductRepository
 {
-    Task<IEnumerable<Product>> GetProducts();
+    Task<PagedList<Product>> GetProducts(PagingParameters pagingParameters);
 }

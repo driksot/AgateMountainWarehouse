@@ -1,5 +1,7 @@
 ﻿using AgateMountainWarehouse.Application.Interfaces;
+using AgateMountainWarehouse.Application.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AgateMountainWarehouse.Api.Controllers;
 
@@ -15,9 +17,11 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
     {
-        var products = await _productRepository.GetProducts();
+        var products = await _productRepository.GetProducts(pagingParameters);
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(products.MetaData));
+
         return Ok(products);
     }
 }

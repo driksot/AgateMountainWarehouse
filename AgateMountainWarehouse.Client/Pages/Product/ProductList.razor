@@ -19,15 +19,30 @@
 </div>
 <div class="row">
     <div class="col">
-        @*Place for pagination*@
+        <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
     </div>
 </div>
 
 @code {
     public List<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+    private PagingParameters _pagingParameters = new PagingParameters();
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await ProductHttpRepository.GetProducts();
+        await GetProducts();
+    }
+
+    private async Task SelectedPage(int page) 
+    {
+        _pagingParameters.PageNumber = page;
+        await GetProducts();
+    }
+
+    private async Task GetProducts() 
+    {
+        var pagingResponse = await ProductHttpRepository.GetProducts(_pagingParameters);
+        Products = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
     }
 }

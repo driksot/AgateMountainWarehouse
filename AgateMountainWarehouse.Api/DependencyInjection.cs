@@ -9,7 +9,8 @@ public static class DependencyInjection
             policy.AddPolicy("CorsPolicy", opt => opt
                 .AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod());
+                .AllowAnyMethod()
+                .WithExposedHeaders("X-Pagination"));
         });
 
         services.AddControllers();

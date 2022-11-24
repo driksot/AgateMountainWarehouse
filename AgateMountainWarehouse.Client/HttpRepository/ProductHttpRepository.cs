@@ -1,4 +1,7 @@
-﻿using AgateMountainWarehouse.Client.ViewModels;
+﻿using AgateMountainWarehouse.Application.RequestFeatures;
+using AgateMountainWarehouse.Client.Features;
+using AgateMountainWarehouse.Client.ViewModels;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
 
 namespace AgateMountainWarehouse.Client.HttpRepository;
@@ -14,16 +17,36 @@ public class ProductHttpRepository : IProductHttpRepository
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
-    public async Task<List<ProductViewModel>> GetProducts()
+    public async Task<PagingResponse<ProductViewModel>> GetProducts(PagingParameters pagingParameters)
     {
-        var response = await _httpClient.GetAsync("products");
+        var queryStringParam = new Dictionary<string, string>
+        {
+            ["pageNumber"] = pagingParameters.PageNumber.ToString()
+        };
+        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("products", queryStringParam));
         var content = await response.Content.ReadAsStringAsync();
+
         if (!response.IsSuccessStatusCode)
         {
-            throw new ApplicationException(content);
+            throw new ApplicationException(content); // TODO: Handle exception
         }
 
-        var products = JsonSerializer.Deserialize<List<ProductViewModel>>(content, _options);
-        return products;
+        var responseItems = JsonSerializer.Deserialize<List<ProductViewModel>>(content, _options);
+        var responseData = JsonSerializer.Deserialize<PagingMetaData>(
+                response.Headers.GetValues("X-Pagination").First(),
+                _options);
+
+        if (responseItems is null || responseData is null)
+        {
+            throw new Exception(); // TODO: Handle exception
+        }
+
+        var pagingResponse = new PagingResponse<ProductViewModel>
+        {
+            Items = responseItems,
+            MetaData = responseData
+        };
+
+        return pagingResponse;
     }
 }
