@@ -1,8 +1,9 @@
-﻿namespace AgateMountainWarehouse.Domain.Entities;
+﻿using AgateMountainWarehouse.Domain.Common;
 
-public class Product
+namespace AgateMountainWarehouse.Domain.Entities;
+
+public class Product : AuditableEntity
 {
-    public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public double Price { get; set; }
