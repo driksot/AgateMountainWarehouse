@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services
         .AddPresentation()
         .AddApplication()
-        .AddInfrastructure();
+        .AddInfrastructure(builder.Configuration);
 }
 
 var app = builder.Build();
@@ -19,6 +19,7 @@ var app = builder.Build();
     }
 
     app.UseHttpsRedirection();
+    app.UseCors("CorsPolicy");
     app.UseAuthorization();
     app.MapControllers();
     app.Run();
