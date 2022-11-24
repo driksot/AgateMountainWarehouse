@@ -19,6 +19,7 @@ public class ProductRepository : IProductRepository
     {
         var products = await _context.Products
             .Search(pagingParameters.SearchTerm)
+            .Sort(pagingParameters.OrderBy)
             .ToListAsync();
 
         return PagedList<Product>.ToPagedList(

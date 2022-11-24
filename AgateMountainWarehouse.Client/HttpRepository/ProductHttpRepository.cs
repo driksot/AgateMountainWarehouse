@@ -29,6 +29,11 @@ public class ProductHttpRepository : IProductHttpRepository
             queryStringParam.Add("searchTerm", pagingParameters.SearchTerm);
         }
 
+        if (pagingParameters.OrderBy.Any())
+        {
+            queryStringParam.Add("orderBy", pagingParameters.OrderBy);
+        }
+
         var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("products", queryStringParam));
         var content = await response.Content.ReadAsStringAsync();
 
