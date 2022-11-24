@@ -1,5 +1,6 @@
 ﻿using AgateMountainWarehouse.Application.Interfaces;
 using AgateMountainWarehouse.Application.RequestFeatures;
+using AgateMountainWarehouse.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -23,5 +24,18 @@ public class ProductsController : ControllerBase
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(products.MetaData));
 
         return Ok(products);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] Product product)
+    {
+        if (product is null)
+        {
+            return BadRequest();
+        }
+
+        await _productRepository.CreateProduct(product);
+
+        return Created("", product);
     }
 }

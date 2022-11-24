@@ -1,10 +1,14 @@
 ﻿@page "/products"
 
 @inject IProductHttpRepository ProductHttpRepository
+@inject NavigationManager NavigationManager
 
 <div class="row">
     <div class="col-md-2">
-        <button class="btn btn-primary">Create Product</button>
+        <button
+            type="button" 
+            class="btn btn-primary"
+            @onclick="AddProduct">Create Product</button>
     </div>
     <div class="col-md-10">
         <Search Type="@Type" OnSearchChanged="SearchChanged" />
@@ -57,5 +61,10 @@
         var pagingResponse = await ProductHttpRepository.GetProducts(_pagingParameters);
         Products = pagingResponse.Items;
         MetaData = pagingResponse.MetaData;
+    }
+
+    private void AddProduct()
+    {
+        NavigationManager.NavigateTo("/createproduct");
     }
 }

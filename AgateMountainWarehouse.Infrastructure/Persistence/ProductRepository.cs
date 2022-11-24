@@ -15,6 +15,12 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
+    public async Task CreateProduct(Product product)
+    {
+        _context.Add(product);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<PagedList<Product>> GetProducts(PagingParameters pagingParameters)
     {
         var products = await _context.Products
