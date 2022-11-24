@@ -1,0 +1,13 @@
+﻿<section style="margin-bottom: 10px">
+    <input type="text" class="form-control" placeholder="@($"Search by {Type} name")"
+           @bind-value="@SearchTerm" @bind-value:event="oninput" @onkeyup="async () => await OnSearchChanged.InvokeAsync(SearchTerm)" />
+</section>
+
+@code {
+    public string SearchTerm { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Type { get; set; } = string.Empty;
+    [Parameter]
+    public EventCallback<string> OnSearchChanged { get; set; }
+}

@@ -19,10 +19,16 @@ public class ProductHttpRepository : IProductHttpRepository
 
     public async Task<PagingResponse<ProductViewModel>> GetProducts(PagingParameters pagingParameters)
     {
-        var queryStringParam = new Dictionary<string, string>
+        var queryStringParam = new Dictionary<string, string?>
         {
             ["pageNumber"] = pagingParameters.PageNumber.ToString()
         };
+
+        if (pagingParameters.SearchTerm.Any())
+        {
+            queryStringParam.Add("searchTerm", pagingParameters.SearchTerm);
+        }
+
         var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("products", queryStringParam));
         var content = await response.Content.ReadAsStringAsync();
 

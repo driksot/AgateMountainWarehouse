@@ -16,4 +16,6 @@ public class PagingParameters
             _pageSize = (value > maxPageSize) ? maxPageSize : value;
         }
     }
+
+    public string SearchTerm { get; set; } = string.Empty;
 }
