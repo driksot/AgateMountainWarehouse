@@ -1,38 +1,43 @@
 ﻿@if (ProductList.Count > 0)
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Update</th>
-                <th scope="col">Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in ProductList)
-            {
-                <tr>
-                    <td>
-                        <img src="@product.ImageUrl" alt="product image" style="width:100px;" />
-                    </td>
-                    <td class="align-middle">
-                        @product.Name
-                    </td>
-                    <td class="align-middle">
-                        $@product.Price
-                    </td>
-                    <td class="align-middle">
-                        <button type="button" class="btn btn-info">Update</button>
-                    </td>
-                    <td class="align-middle">
-                        <button type="button" class="btn btn-danger">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <TableTemplate Items="ProductList" Context="product">
+        <TableHeader>
+            <th scope="col">Image</th>
+            <th class="sort-th" @onclick="@(() => ApplySort("name"))" scope="col">
+                Name
+                @if (activeSortColumn == "name") 
+                {
+                    <span class="float-end @SortHeaderClass"></span>
+                }
+            </th>
+            <th class="sort-th" @onclick="@(() => ApplySort("price"))" scope="col">
+                Price
+                @if (activeSortColumn == "price")
+                {
+                    <span class="float-end @SortHeaderClass"></span>
+                }
+            </th>
+            <th scope="col" class="text-center">Update</th>
+            <th scope="col" class="text-center">Delete</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>
+                <img src="@product.ImageUrl" alt="product image" style="width:100px;" />
+            </td>
+            <td class="align-middle">
+                @product.Name
+            </td>
+            <td class="align-middle">
+                $@product.Price
+            </td>
+            <td class="align-middle text-center">
+                <i class="oi oi-pencil text-secondary"></i>
+            </td>
+            <td class="align-middle text-center">
+                <i class="oi oi-trash text-danger"></i>
+            </td>
+        </RowTemplate>
+    </TableTemplate>
 }
 else
 {
@@ -44,4 +49,43 @@ else
 @code {
     [Parameter]
     public List<ProductViewModel> ProductList { get; set; } = new List<ProductViewModel>();
+    [Parameter]
+    public string SortHeaderClass { get; set; } = string.Empty;
+    [Parameter]
+    public EventCallback<string> OnSortChanged { get; set; }
+
+    private bool isSortedAscending;
+    private string activeSortColumn = "name";
+    private string sortString;
+
+    private async Task ApplySort(string columnName)
+    {
+        if (columnName != activeSortColumn) 
+        {
+            isSortedAscending = true;
+            activeSortColumn = columnName;
+            SortHeaderClass = "oi oi-caret-top";
+        }
+        else
+        {
+            if (isSortedAscending)
+            {
+                SortHeaderClass = "oi oi-caret-top";
+            }
+            else
+            {
+                SortHeaderClass = "oi oi-caret-bottom";
+            }
+        }
+
+        isSortedAscending = !isSortedAscending;
+
+        Console.WriteLine(isSortedAscending.ToString());
+
+        sortString = isSortedAscending ? $"{columnName}" : $"{columnName} desc";
+
+        Console.WriteLine(sortString);
+
+        await OnSortChanged.InvokeAsync(sortString);
+    }
 }

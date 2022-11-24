@@ -16,6 +16,8 @@
         if (eventArgs.Value is null || eventArgs.Value.ToString() == "-1")
             return;
 
+        Console.WriteLine(eventArgs.Value.ToString());
+
         await OnSortChanged.InvokeAsync(eventArgs.Value.ToString());
     }
 }
