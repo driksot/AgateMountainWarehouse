@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="StaticFiles\Images\Products\labradorite.png" />
+    <Content Include="StaticFiles\Images\Products\turquoise.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,10 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AgateMountainWarehouse.Application\AgateMountainWarehouse.Application.csproj" />
     <ProjectReference Include="..\AgateMountainWarehouse.Infrastructure\AgateMountainWarehouse.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 
 </Project>

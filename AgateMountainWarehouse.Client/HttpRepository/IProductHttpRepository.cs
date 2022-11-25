@@ -8,4 +8,5 @@ public interface IProductHttpRepository
 {
     Task<PagingResponse<ProductViewModel>> GetProducts(PagingParameters pagingParameters);
     Task CreateProduct(ProductViewModel product);
+    Task<string> UploadProductImage(MultipartFormDataContent content);
 }

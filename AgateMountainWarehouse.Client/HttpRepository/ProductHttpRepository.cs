@@ -75,4 +75,20 @@ public class ProductHttpRepository : IProductHttpRepository
 
         return pagingResponse;
     }
+
+    public async Task<string> UploadProductImage(MultipartFormDataContent content)
+    {
+        var postResult = await _httpClient.PostAsync("upload", content);
+        var postContent = await postResult.Content.ReadAsStringAsync();
+
+        if (!postResult.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(postContent);
+        }
+        else
+        {
+            var imgUrl = Path.Combine("https://localhost:7252/", postContent);
+            return imgUrl;
+        }
+    }
 }

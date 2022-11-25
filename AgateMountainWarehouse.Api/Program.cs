@@ -1,6 +1,7 @@
 using AgateMountainWarehouse.Api;
 using AgateMountainWarehouse.Application;
 using AgateMountainWarehouse.Infrastructure;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -20,6 +21,12 @@ var app = builder.Build();
 
     app.UseHttpsRedirection();
     app.UseCors("CorsPolicy");
+    app.UseStaticFiles();
+    app.UseStaticFiles(new StaticFileOptions()
+    {
+        FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"StaticFiles")),
+        RequestPath = new PathString("/StaticFiles")
+    });
     app.UseAuthorization();
     app.MapControllers();
     app.Run();
