@@ -26,6 +26,13 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var product = await _productRepository.GetProductById(id);
+        return Ok(product);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Product product)
     {
@@ -37,5 +44,17 @@ public class ProductsController : ControllerBase
         await _productRepository.CreateProduct(product);
 
         return Created("", product);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] Product product)
+    {
+        var dbProduct = await _productRepository.GetProductById(id);
+        if (dbProduct is null)
+            return NotFound();
+
+        await _productRepository.UpdateProduct(product, dbProduct);
+
+        return NoContent();
     }
 }

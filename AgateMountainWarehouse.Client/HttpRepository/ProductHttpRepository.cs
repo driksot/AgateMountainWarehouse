@@ -32,6 +32,22 @@ public class ProductHttpRepository : IProductHttpRepository
         }
     }
 
+    public async Task<ProductViewModel> GetProductById(string id)
+    {
+        var url = Path.Combine("products", id);
+
+        var response = await _httpClient.GetAsync(url);
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        var product = JsonSerializer.Deserialize<ProductViewModel>(content, _options);
+        return product;
+    }
+
     public async Task<PagingResponse<ProductViewModel>> GetProducts(PagingParameters pagingParameters)
     {
         var queryStringParam = new Dictionary<string, string?>
@@ -74,6 +90,21 @@ public class ProductHttpRepository : IProductHttpRepository
         };
 
         return pagingResponse;
+    }
+
+    public async Task UpdateProduct(ProductViewModel product)
+    {
+        var content = JsonSerializer.Serialize(product);
+        var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+        var url = Path.Combine("products", product.Id.ToString());
+
+        var putResult = await _httpClient.PutAsync(url, bodyContent);
+        var putContent = await putResult.Content.ReadAsStringAsync();
+
+        if (!putResult.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(putContent);
+        }
     }
 
     public async Task<string> UploadProductImage(MultipartFormDataContent content)

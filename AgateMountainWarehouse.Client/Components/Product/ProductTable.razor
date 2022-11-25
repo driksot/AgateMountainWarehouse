@@ -1,4 +1,6 @@
-﻿@if (ProductList.Count > 0)
+﻿@inject NavigationManager NavigationManager
+
+@if (ProductList.Count > 0)
 {
     <TableTemplate Items="ProductList" Context="product">
         <TableHeader>
@@ -31,10 +33,10 @@
                 $@product.Price
             </td>
             <td class="align-middle text-center">
-                <i class="oi oi-pencil text-secondary"></i>
+                <i class="oi oi-pencil text-secondary p-2" @onclick="() => NavigateToUpdate(product.Id)"></i>
             </td>
             <td class="align-middle text-center">
-                <i class="oi oi-trash text-danger"></i>
+                <i class="oi oi-trash text-danger p-2"></i>
             </td>
         </RowTemplate>
     </TableTemplate>
@@ -56,7 +58,7 @@ else
 
     private bool isSortedAscending;
     private string activeSortColumn = "name";
-    private string sortString;
+    private string sortString = string.Empty;
 
     private async Task ApplySort(string columnName)
     {
@@ -80,12 +82,14 @@ else
 
         isSortedAscending = !isSortedAscending;
 
-        Console.WriteLine(isSortedAscending.ToString());
-
         sortString = isSortedAscending ? $"{columnName}" : $"{columnName} desc";
 
-        Console.WriteLine(sortString);
-
         await OnSortChanged.InvokeAsync(sortString);
+    }
+
+    private void NavigateToUpdate(Guid id) 
+    {
+        var url = Path.Combine("/updateProduct", id.ToString());
+        NavigationManager.NavigateTo(url);
     }
 }

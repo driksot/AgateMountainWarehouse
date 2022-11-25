@@ -6,5 +6,7 @@ namespace AgateMountainWarehouse.Application.Interfaces;
 public interface IProductRepository
 {
     Task<PagedList<Product>> GetProducts(PagingParameters pagingParameters);
+    Task<Product> GetProductById(Guid productId);
     Task CreateProduct(Product product);
+    Task UpdateProduct(Product product, Product dbProduct);
 }

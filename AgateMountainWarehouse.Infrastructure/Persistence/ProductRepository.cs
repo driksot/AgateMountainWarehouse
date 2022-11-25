@@ -21,6 +21,11 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task<Product> GetProductById(Guid productId)
+    {
+        return await _context.Products.FirstOrDefaultAsync(p => p.Id.Equals(productId));
+    }
+
     public async Task<PagedList<Product>> GetProducts(PagingParameters pagingParameters)
     {
         var products = await _context.Products
@@ -32,5 +37,15 @@ public class ProductRepository : IProductRepository
             products, 
             pagingParameters.PageNumber, 
             pagingParameters.PageSize);
+    }
+
+    public async Task UpdateProduct(Product product, Product dbProduct)
+    {
+        dbProduct.Name = product.Name;
+        dbProduct.Description = product.Description;
+        dbProduct.Price = product.Price;
+        dbProduct.ImageUrl = product.ImageUrl;
+
+        await _context.SaveChangesAsync();
     }
 }
