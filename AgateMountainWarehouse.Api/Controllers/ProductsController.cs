@@ -57,4 +57,16 @@ public class ProductsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var product = await _productRepository.GetProductById(id);
+        if (product is null)
+            return NotFound();
+
+        await _productRepository.DeleteProduct(product);
+
+        return NoContent();
+    }
 }

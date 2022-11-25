@@ -16,7 +16,7 @@
 </div>
 <div class="row">
     <div class="col mt-2">
-        <ProductTable ProductList="Products" OnSortChanged="SortChanged" />
+        <ProductTable ProductList="Products" OnSortChanged="SortChanged" OnDeleted="DeleteProduct" />
     </div>
 </div>
 <div class="row">
@@ -66,5 +66,12 @@
     private void AddProduct()
     {
         NavigationManager.NavigateTo("/createproduct");
+    }
+
+    private async Task DeleteProduct(Guid id) 
+    {
+        await ProductHttpRepository.DeleteProduct(id);
+        _pagingParameters.PageNumber = 1;
+        await GetProducts();
     }
 }
