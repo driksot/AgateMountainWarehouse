@@ -18,6 +18,16 @@ public class ProductRepository : IProductRepository
     public async Task CreateProduct(Product product)
     {
         _context.Add(product);
+
+        var newInventory = new Inventory
+        {
+            ProductId = product.Id,
+            Product = product,
+            QuantityOnHand = 0
+        };
+
+        _context.Inventories.Add(newInventory);
+
         await _context.SaveChangesAsync();
     }
 
