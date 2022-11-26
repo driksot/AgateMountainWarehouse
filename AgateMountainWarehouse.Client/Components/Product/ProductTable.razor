@@ -5,26 +5,26 @@
 {
     <TableTemplate Items="ProductList" Context="product">
         <TableHeader>
-            <th scope="col">Image</th>
-            <th class="sort-th" @onclick="@(() => ApplySort("name"))" scope="col">
+            <th scope="col" style="width:10%">Image</th>
+            <th class="sort-th" @onclick="@(() => ApplySort("name"))" scope="col" style="width:40%">
                 Name
                 @if (activeSortColumn == "name") 
                 {
                     <span class="float-end @SortHeaderClass"></span>
                 }
             </th>
-            <th class="sort-th" @onclick="@(() => ApplySort("price"))" scope="col">
+            <th class="sort-th" @onclick="@(() => ApplySort("price"))" scope="col" style="width:20%">
                 Price
                 @if (activeSortColumn == "price")
                 {
                     <span class="float-end @SortHeaderClass"></span>
                 }
             </th>
-            <th scope="col" class="text-center">Update</th>
-            <th scope="col" class="text-center">Delete</th>
+            <th scope="col" class="text-center" style="width:15%">Update</th>
+            <th scope="col" class="text-center" style="width:15%">Delete</th>
         </TableHeader>
         <RowTemplate>
-            <td>
+            <td class="text-center">
                 <img src="@product.ImageUrl" alt="product image" style="width:100px;" />
             </td>
             <td class="align-middle">
