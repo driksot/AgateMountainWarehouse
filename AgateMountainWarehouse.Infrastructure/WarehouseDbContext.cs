@@ -33,4 +33,6 @@ public class WarehouseDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
+    public DbSet<SalesOrder> SalesOrders { get; set; }
+    public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
 }
