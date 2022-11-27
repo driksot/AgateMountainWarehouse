@@ -1,10 +1,8 @@
-﻿using AgateMountainWarehouse.Domain.Common;
+﻿namespace AgateMountainWarehouse.Domain.Entities;
 
-namespace AgateMountainWarehouse.Domain.Entities;
-
-public class SalesOrderItem : AuditableEntity
+public class SalesOrderItem
 {
-    public Guid ProductId { get; set; }
-    public Product? Product { get; set; }
+    public Guid Id { get; set; }
+    public Product Product { get; set; } = new Product();
     public int Quantity { get; set; }
 }

@@ -25,10 +25,10 @@ public class SalesOrderRepository : ISalesOrderRepository
     {
         foreach (var item in order.OrderItems)
         {
-            item.Product = await _productRepository.GetProductById(item.ProductId);
+            item.Product = await _productRepository.GetProductById(item.Id);
 
             // Adjust product inventory quantity
-            var inventory = await _inventoryRepository.GetInventoryByProductId(item.ProductId);
+            var inventory = await _inventoryRepository.GetInventoryByProductId(item.Id);
             var adjustment = inventory.QuantityOnHand - item.Quantity;
 
             await _inventoryRepository.UpdateQuantityOnHand(inventory.Id, adjustment);
