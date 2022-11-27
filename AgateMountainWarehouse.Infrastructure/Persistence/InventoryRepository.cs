@@ -56,7 +56,7 @@ public class InventoryRepository : IInventoryRepository
             .Include(i => i.Product)
             .FirstOrDefaultAsync(i => i.Id.Equals(inventoryId));
 
-            inventory.QuantityOnHand += adjustment;
+            inventory.QuantityOnHand = adjustment;
 
             await _context.SaveChangesAsync();
         }

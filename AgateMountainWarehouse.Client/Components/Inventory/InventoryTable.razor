@@ -1,0 +1,111 @@
+﻿@inject IInventoryHttpRepository InventoryHttpRepository
+
+@if (InventoryList.Count > 0)
+{
+    <TableTemplate Items="InventoryList" Context="inventory">
+        <TableHeader>
+            <th scope="col" style="width:10%">Image</th>
+            <th class="sort-th" @onclick="@(() => ApplySort("name"))" scope="col" style="width:40%">
+                Name
+                @if (activeSortColumn == "name")
+                {
+                    <span class="float-end @SortHeaderClass"></span>
+                }
+            </th>
+            <th class="sort-th" @onclick="@(() => ApplySort("quantityOnHand"))" scope="col" style="width:50%">
+                Quantity On Hand
+                @if (activeSortColumn == "quantityOnHand")
+                {
+                    <span class="float-end @SortHeaderClass"></span>
+                }
+            </th>
+        </TableHeader>
+        <RowTemplate>
+            <td class="text-center">
+                <img src="@inventory.Product.ImageUrl" alt="product image" style="width:100px;" />
+            </td>
+            <td class="align-middle">
+                @inventory.Product.Name
+            </td>
+            <td class="align-middle">
+                <EditForm Model="inventory" class="row">
+                    <div class="form-group col-9">
+                        <InputNumber class="form-control"
+                                 @bind-Value="inventory.QuantityOnHand">
+                        </InputNumber>
+                    </div>
+                    <div class="col-3">
+                        <button 
+                            type="submit" 
+                            class="btn btn-success"
+                            @onclick="() => AdjustQuantity(inventory.Id, inventory.QuantityOnHand)">Save</button>
+                    </div>
+                </EditForm>
+            </td>
+        </RowTemplate>
+    </TableTemplate>
+}
+else
+{
+    <span>
+        Loading inventories...
+    </span>
+}
+
+@code {
+    [Parameter]
+    public List<InventoryViewModel> InventoryList { get; set; } = new List<InventoryViewModel>();
+
+    [Parameter]
+    public string SortHeaderClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSortChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<InventoryAdjustmentViewModel> OnAdjustQuantity { get; set; }
+
+    private InventoryAdjustmentViewModel _inventoryAdjustment = new InventoryAdjustmentViewModel();
+
+    private bool isSortedAscending;
+    private string activeSortColumn = "name";
+    private string sortString = string.Empty;
+
+    private async Task ApplySort(string columnName)
+    {
+        if (columnName != activeSortColumn)
+        {
+            isSortedAscending = true;
+            activeSortColumn = columnName;
+            SortHeaderClass = "oi oi-caret-top";
+        }
+        else
+        {
+            if (isSortedAscending)
+            {
+                SortHeaderClass = "oi oi-caret-top";
+            }
+            else
+            {
+                SortHeaderClass = "oi oi-caret-bottom";
+            }
+        }
+
+        isSortedAscending = !isSortedAscending;
+
+        sortString = isSortedAscending ? $"{columnName}" : $"{columnName} desc";
+
+        await OnSortChanged.InvokeAsync(sortString);
+    }
+
+    private async Task AdjustQuantity(Guid id, int quantity) 
+    {
+        _inventoryAdjustment = new InventoryAdjustmentViewModel
+        {
+            InventoryId = id,
+            Adjustment = quantity
+        };
+
+        await OnAdjustQuantity.InvokeAsync(_inventoryAdjustment);
+    }
+}

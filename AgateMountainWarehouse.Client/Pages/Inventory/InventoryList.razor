@@ -1,0 +1,87 @@
+﻿@page "/inventories"
+
+@inject IInventoryHttpRepository InventoryHttpRepository
+@inject IProductHttpRepository ProductHttpRepository
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="row">
+    <div class="col-md-2">
+        <button 
+            type="button"
+            class="btn btn-primary"
+            @onclick="GetInventories">
+            Reset
+        </button>
+    </div>
+    <div class="col-md-10">
+        <Search Type="@Type" OnSearchChanged="SearchChanged" />
+    </div>
+</div>
+<div class="row">
+    <div class="col mt-2">
+        <InventoryTable 
+            InventoryList="Inventories" 
+            OnSortChanged="SortChanged"
+            OnAdjustQuantity="AdjustQuantity"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
+    </div>
+</div>
+
+@code {
+    public List<InventoryViewModel> Inventories { get; set; } = new List<InventoryViewModel>();
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+    public string Type { get; set; } = string.Empty;
+
+    private PagingParameters _pagingParameters = new PagingParameters();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Type = "product inventory";
+        await GetInventories();
+    }
+
+    private async Task SelectedPage(int page) 
+    {
+        _pagingParameters.PageNumber = page;
+        await GetInventories();
+    }
+
+    private async Task SearchChanged(string searchTerm) 
+    {
+        _pagingParameters.PageNumber = 1;
+        _pagingParameters.SearchTerm = searchTerm;
+        await GetInventories();
+    }
+
+    private async Task SortChanged(string orderBy) 
+    {
+        _pagingParameters.OrderBy = orderBy;
+        await GetInventories();
+    }
+
+    private async Task AdjustQuantity(InventoryAdjustmentViewModel inventoryAdjustment) 
+    {
+        await InventoryHttpRepository.UpdateQuantityOnHand(inventoryAdjustment);
+        await GetInventories();
+
+        await JSRuntime.InvokeVoidAsync("alert", "Inventory quatity has been updated");
+    }
+
+    private async Task GetInventories() 
+    {
+        var pagingResponse = await InventoryHttpRepository.GetInventories(_pagingParameters);
+        Inventories = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+
+        foreach (var inventory in Inventories)
+        {
+            var product = await ProductHttpRepository.GetProductById(inventory.ProductId.ToString());
+            inventory.Product = product;
+        }
+    }
+}

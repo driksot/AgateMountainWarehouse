@@ -1,0 +1,25 @@
+﻿@if (Inventory is not null) 
+{
+    <td class="text-center">
+        <img src="@Product.ImageUrl" alt="product image" style="width:100px;" />
+    </td>
+    <td class="align-middle">
+        @Product.Name
+    </td>
+    <td class="align-middle">
+        <div class="form-group">
+            <InputNumber 
+                class="form-control" 
+                @bind-Value="Inventory.QuantityOnHand">
+            </InputNumber>
+        </div>
+    </td>
+}
+
+@code {
+    [CascadingParameter(Name = "Inventory")]
+    public InventoryViewModel Inventory { get; set; } = new InventoryViewModel();
+
+    [Parameter]
+    public ProductViewModel Product { get; set; } = new ProductViewModel();
+}
