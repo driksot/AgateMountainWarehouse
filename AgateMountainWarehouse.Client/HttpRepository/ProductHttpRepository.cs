@@ -65,7 +65,8 @@ public class ProductHttpRepository : IProductHttpRepository
     {
         var queryStringParam = new Dictionary<string, string?>
         {
-            ["pageNumber"] = pagingParameters.PageNumber.ToString()
+            ["pageNumber"] = pagingParameters.PageNumber.ToString(),
+            ["pageSize"] = pagingParameters.PageSize.ToString()
         };
 
         if (pagingParameters.SearchTerm.Any())

@@ -11,6 +11,8 @@ public class SalesOrderRepository : ISalesOrderRepository
     private readonly IProductRepository _productRepository;
     private readonly IInventoryRepository _inventoryRepository;
 
+    private double _price;
+
     public SalesOrderRepository(
         WarehouseDbContext context, 
         IProductRepository productRepository, 
@@ -27,12 +29,16 @@ public class SalesOrderRepository : ISalesOrderRepository
         {
             item.Product = await _productRepository.GetProductById(item.Id);
 
+            _price += (item.Product.Price * item.Quantity);
+
             // Adjust product inventory quantity
             var inventory = await _inventoryRepository.GetInventoryByProductId(item.Id);
             var adjustment = inventory.QuantityOnHand - item.Quantity;
 
             await _inventoryRepository.UpdateQuantityOnHand(inventory.Id, adjustment);
         }
+
+        order.TotalCost = _price;
 
         await _context.SalesOrders.AddAsync(order);
         await _context.SaveChangesAsync();

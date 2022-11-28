@@ -1,3 +1,4 @@
+using AgateMountainWarehouse.Application.Interfaces;
 using AgateMountainWarehouse.Client;
 using AgateMountainWarehouse.Client.HttpRepository;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,6 +13,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
     builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7252/api/") });
     builder.Services.AddScoped<IProductHttpRepository, ProductHttpRepository>();
     builder.Services.AddScoped<IInventoryHttpRepository, InventoryHttpRepository>();
+    builder.Services.AddScoped<IOrderHttpRepository, OrderHttpRepository>();
 
     builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
 }

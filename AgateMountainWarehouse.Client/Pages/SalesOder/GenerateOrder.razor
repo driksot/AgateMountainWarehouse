@@ -1,0 +1,100 @@
+﻿@page "/generateOrder"
+
+@inject IOrderHttpRepository OrderHttpRepository
+@inject IProductHttpRepository ProductHttpRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Generate Order</PageTitle>
+
+<h2>Generate Sales Order</h2>
+
+<EditForm Model="_selectedOrderItem" OnSubmit="AddLineItem">
+
+    <div>
+        <label for="product">Product:</label>
+        <select id="product" @bind="_selectedOrderItem.Id">
+            <option disabled value="">Please select a Product</option>
+            @foreach (var item in _orderItems)
+            {
+                <option value="@item.Id" key>@item.Product.Name</option>
+            }
+        </select>
+
+        <label for="quantity">Quantity:</label>
+        <InputNumber id="quantity" @bind-Value="@_selectedOrderItem.Quantity" />
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-success">Add Line Item</button>
+        <button type="button" class="btn btn-primary ms-2" @onclick="FinalizeOrder">Finalize Order</button>
+    </div>
+
+</EditForm>
+
+<OrderItemTable ItemList="_selectedOrderItems" />
+
+@code {
+    private SalesOrderViewModel _order = new SalesOrderViewModel();
+    private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
+    private List<SalesOrderItemViewModel> _selectedOrderItems = new List<SalesOrderItemViewModel>();
+    private SalesOrderItemViewModel _selectedOrderItem = new SalesOrderItemViewModel();
+
+    public List<ProductViewModel> Products = new List<ProductViewModel>();
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+    private PagingParameters _pagingParameters = new PagingParameters();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pagingParameters.SetPrivatePageSize("PageSize", 50);
+
+        await GetProducts();
+
+        Console.WriteLine(_orderItems.Count);
+        Console.WriteLine(_pagingParameters.PageSize);
+    }
+
+    private async Task Generate() 
+    {
+        await OrderHttpRepository.GenerateOrder(_order);
+        NavigationManager.NavigateTo("/orders");
+    }
+
+    private async Task GetProducts()
+    {
+        var pagingResponse = await ProductHttpRepository.GetProducts(_pagingParameters);
+        Products = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+
+        foreach (var prod in Products)
+        {
+            var item = new SalesOrderItemViewModel
+                {
+                    Id = prod.Id,
+                    Product = prod
+                };
+
+            _orderItems.Add(item);
+        }
+    }
+
+    private async Task AddLineItem() 
+    {
+        var product = await ProductHttpRepository.GetProductById(_selectedOrderItem.Id.ToString());
+
+        _selectedOrderItem.Product = product;
+
+        _selectedOrderItems.Add(_selectedOrderItem);
+
+        Console.WriteLine(_selectedOrderItem.Id);
+    }
+
+    private void FinalizeOrder() 
+    {
+
+    }
+
+    private void Cancel() 
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
+}
