@@ -8,36 +8,58 @@
 
 <h2>Generate Sales Order</h2>
 
-<EditForm Model="_selectedOrderItem" OnSubmit="AddLineItem">
+@if (_orderItems.Count > 0)
+{
+    <EditForm Model="_selectedOrderItem" OnSubmit="AddLineItem" class="card card-body bg-light my-4">
 
-    <div>
-        <label for="product">Product:</label>
-        <select id="product" @bind="_selectedOrderItem.Id">
-            <option disabled value="">Please select a Product</option>
-            @foreach (var item in _orderItems)
-            {
-                <option value="@item.Id" key>@item.Product.Name</option>
-            }
-        </select>
+        <div class="row mb-2">
+            <div class="col-md-10">
+                <label for="product" class="col-form-label">Product:</label>
+                <div class="">
+                    <select id="product" @bind="_selectedOrderItem.Id" class="form-control">
+                        <option value="" disabled selected hidden>Please select a Product</option>
+                        @foreach (var item in _orderItems)
+                        {
+                            <option value="@item.Id" key>@item.Product.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
 
-        <label for="quantity">Quantity:</label>
-        <InputNumber id="quantity" @bind-Value="@_selectedOrderItem.Quantity" />
-    </div>
+            <div class="col-md-2">
+                <label for="quantity" class="col-form-label">Quantity:</label>
+                <div class="">
+                    <InputNumber id="quantity" @bind-Value="@_selectedOrderItem.Quantity" class="form-control" />
+                </div>
+            </div>
 
-    <div>
-        <button type="submit" class="btn btn-success">Add Line Item</button>
-        <button type="button" class="btn btn-primary ms-2" @onclick="FinalizeOrder">Finalize Order</button>
-    </div>
+        </div>
 
-</EditForm>
+        <br />
+
+        <div>
+            <button type="submit" class="btn btn-success">Add Line Item</button>
+            <button type="button" class="btn btn-primary ms-2" @onclick="FinalizeOrder">Finalize Order</button>
+        </div>
+
+    </EditForm>
+}
+else
+{
+    <span>Loading form...</span>
+}
 
 <OrderItemTable ItemList="_selectedOrderItems" />
+
+<SuccessNotification @ref="_notification" NavUrl="@_navUrl" />
 
 @code {
     private SalesOrderViewModel _order = new SalesOrderViewModel();
     private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
     private List<SalesOrderItemViewModel> _selectedOrderItems = new List<SalesOrderItemViewModel>();
     private SalesOrderItemViewModel _selectedOrderItem = new SalesOrderItemViewModel();
+    private SuccessNotification _notification = new SuccessNotification();
+    private string _navUrl = "/orders";
 
     public List<ProductViewModel> Products = new List<ProductViewModel>();
     public PagingMetaData MetaData { get; set; } = new PagingMetaData();
@@ -51,12 +73,6 @@
 
         Console.WriteLine(_orderItems.Count);
         Console.WriteLine(_pagingParameters.PageSize);
-    }
-
-    private async Task Generate() 
-    {
-        await OrderHttpRepository.GenerateOrder(_order);
-        NavigationManager.NavigateTo("/orders");
     }
 
     private async Task GetProducts()
@@ -86,11 +102,24 @@
         _selectedOrderItems.Add(_selectedOrderItem);
 
         Console.WriteLine(_selectedOrderItem.Id);
+
+        _selectedOrderItem = new SalesOrderItemViewModel();
     }
 
-    private void FinalizeOrder() 
+    private async Task FinalizeOrder() 
     {
+        double totalCost = 0;
 
+        foreach (var item in _selectedOrderItems)
+        {
+            totalCost += item.Product.Price * item.Quantity;
+        }
+
+        _order.OrderItems = _selectedOrderItems;
+        _order.TotalCost = totalCost;
+
+        await OrderHttpRepository.GenerateOrder(_order);
+        _notification.Show();
     }
 
     private void Cancel() 

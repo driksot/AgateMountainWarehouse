@@ -1,5 +1,6 @@
 ﻿using AgateMountainWarehouse.Application.RequestFeatures;
 using AgateMountainWarehouse.Client.Features;
+using AgateMountainWarehouse.Client.Static;
 using AgateMountainWarehouse.Client.ViewModels;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
@@ -23,7 +24,7 @@ public class ProductHttpRepository : IProductHttpRepository
         var content = JsonSerializer.Serialize(product);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-        var postResult = await _httpClient.PostAsync("products", bodyContent);
+        var postResult = await _httpClient.PostAsync(APIEndpoints._products, bodyContent);
         var postContent = await postResult.Content.ReadAsStringAsync();
 
         if (!postResult.IsSuccessStatusCode)
@@ -34,7 +35,7 @@ public class ProductHttpRepository : IProductHttpRepository
 
     public async Task DeleteProduct(Guid id)
     {
-        var url = Path.Combine("products", id.ToString());
+        var url = Path.Combine(APIEndpoints._products, id.ToString());
 
         var deleteResult = await _httpClient.DeleteAsync(url);
         var deleteContent = await deleteResult.Content.ReadAsStringAsync();
@@ -47,7 +48,7 @@ public class ProductHttpRepository : IProductHttpRepository
 
     public async Task<ProductViewModel> GetProductById(string id)
     {
-        var url = Path.Combine("products", id);
+        var url = Path.Combine(APIEndpoints._products, id);
 
         var response = await _httpClient.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
@@ -79,7 +80,7 @@ public class ProductHttpRepository : IProductHttpRepository
             queryStringParam.Add("orderBy", pagingParameters.OrderBy);
         }
 
-        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("products", queryStringParam));
+        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString(APIEndpoints._products, queryStringParam));
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -110,7 +111,7 @@ public class ProductHttpRepository : IProductHttpRepository
     {
         var content = JsonSerializer.Serialize(product);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
-        var url = Path.Combine("products", product.Id.ToString());
+        var url = Path.Combine(APIEndpoints._products, product.Id.ToString());
 
         var putResult = await _httpClient.PutAsync(url, bodyContent);
         var putContent = await putResult.Content.ReadAsStringAsync();

@@ -1,5 +1,6 @@
 ﻿using AgateMountainWarehouse.Application.RequestFeatures;
 using AgateMountainWarehouse.Client.Features;
+using AgateMountainWarehouse.Client.Static;
 using AgateMountainWarehouse.Client.ViewModels;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
@@ -20,7 +21,7 @@ public class InventoryHttpRepository : IInventoryHttpRepository
 
     public async Task DeleteInventory(Guid inventoryId)
     {
-        var url = Path.Combine("inventories", inventoryId.ToString());
+        var url = Path.Combine(APIEndpoints._inventories, inventoryId.ToString());
 
         var deleteResult = await _httpClient.DeleteAsync(url);
         var deleteContent = await deleteResult.Content.ReadAsStringAsync();
@@ -47,7 +48,7 @@ public class InventoryHttpRepository : IInventoryHttpRepository
             queryStringParam.Add("orderBy", pagingParameters.OrderBy);
         }
 
-        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("inventories", queryStringParam));
+        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString(APIEndpoints._inventories, queryStringParam));
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -76,7 +77,7 @@ public class InventoryHttpRepository : IInventoryHttpRepository
 
     public async Task<InventoryViewModel> GetInventoryByProductId(string productId)
     {
-        var url = Path.Combine("inventories", productId);
+        var url = Path.Combine(APIEndpoints._inventories, productId);
 
         var response = await _httpClient.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
@@ -95,7 +96,7 @@ public class InventoryHttpRepository : IInventoryHttpRepository
         var content = JsonSerializer.Serialize(inventoryAdjustment);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-        var patchResult = await _httpClient.PatchAsync("inventories", bodyContent);
+        var patchResult = await _httpClient.PatchAsync(APIEndpoints._inventories, bodyContent);
         var patchContent = await patchResult.Content.ReadAsStringAsync();
 
         if (!patchResult.IsSuccessStatusCode)

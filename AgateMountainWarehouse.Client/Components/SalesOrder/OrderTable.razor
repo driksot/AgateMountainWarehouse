@@ -29,7 +29,7 @@
                 @order.OrderItems.Count
             </td>
             <td class="align-middle text-center">
-                @order.TotalCost
+                @order.TotalCost.ToString("c")
             </td>
             <td class="align-middle text-center">
                 @order.CreatedDateTime.ToString("MMMM dd yyyy")

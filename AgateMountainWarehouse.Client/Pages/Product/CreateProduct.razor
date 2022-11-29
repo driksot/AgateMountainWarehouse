@@ -49,11 +49,12 @@
 
 </EditForm>
 
-<SuccessNotification @ref="_notification" />
+<SuccessNotification @ref="_notification" NavUrl="@_navUrl" />
 
 @code {
     private ProductViewModel _product = new ProductViewModel();
     private SuccessNotification _notification = new SuccessNotification();
+    private string _navUrl = "/products";
 
     private async Task Create()
     {

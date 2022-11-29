@@ -25,6 +25,9 @@
 }
 
 @code {
+    [Parameter]
+    public string NavUrl { get; set; } = string.Empty;
+
     private string _modalDisplay = "none";
     private string _modalClass = string.Empty;
     private bool _showBackdrop;
@@ -43,6 +46,6 @@
         _modalClass = "";
         _showBackdrop = false;
         StateHasChanged();
-        NavigationManager.NavigateTo("/products");
+        NavigationManager.NavigateTo(NavUrl);
     }
 }

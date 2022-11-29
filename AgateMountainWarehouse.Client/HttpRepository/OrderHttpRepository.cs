@@ -1,5 +1,6 @@
 ﻿using AgateMountainWarehouse.Application.RequestFeatures;
 using AgateMountainWarehouse.Client.Features;
+using AgateMountainWarehouse.Client.Static;
 using AgateMountainWarehouse.Client.ViewModels;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
@@ -23,7 +24,7 @@ public class OrderHttpRepository : IOrderHttpRepository
         var content = JsonSerializer.Serialize(order);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-        var postResult = await _httpClient.PostAsync("orders", bodyContent);
+        var postResult = await _httpClient.PostAsync(APIEndpoints._orders, bodyContent);
         var postContent = await postResult.Content.ReadAsStringAsync();
 
         if (!postResult.IsSuccessStatusCode)
@@ -34,7 +35,7 @@ public class OrderHttpRepository : IOrderHttpRepository
 
     public async Task<SalesOrderViewModel> GetOrderById(string orderId)
     {
-        var url = Path.Combine("orders", orderId);
+        var url = Path.Combine(APIEndpoints._orders, orderId);
 
         var response = await _httpClient.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
@@ -55,7 +56,7 @@ public class OrderHttpRepository : IOrderHttpRepository
             ["pageNumber"] = pagingParameters.PageNumber.ToString()
         };
 
-        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("orders", queryStringParam));
+        var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString(APIEndpoints._orders, queryStringParam));
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -84,7 +85,7 @@ public class OrderHttpRepository : IOrderHttpRepository
 
     public async Task MarkFulfilled(Guid orderId)
     {
-        var url = Path.Combine("orders", orderId.ToString());
+        var url = Path.Combine(APIEndpoints._orders, orderId.ToString());
 
         var patchResult = await _httpClient.PatchAsync(url, null);
         var patchContent = await patchResult.Content.ReadAsStringAsync();
