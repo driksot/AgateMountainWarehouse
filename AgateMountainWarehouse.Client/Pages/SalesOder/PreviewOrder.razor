@@ -1,7 +1,87 @@
-﻿@page "/orderPreview"
+﻿@page "/orderPreview/{id}"
 
-<h3>PreviewOrder</h3>
+@inject IOrderHttpRepository OrderHttpRepository
+@inject NavigationManager NavigationManager
+
+<div class="float-end">
+    <button type="button" class="btn btn-success">Print Order</button>
+    <button type="button" class="btn btn-primary ms-2" @onclick="NavigateBack">Back</button>
+</div>
+
+@if (_order is not null) 
+{
+    <br />
+    <br />
+    <hr />
+
+    <section>
+
+        <div>
+            <h5>1234 Agate Mountain Dr.</h5>
+            <h5>Phoenix, AZ 85004</h5>
+            <h5>USA</h5>
+        </div>
+
+        <hr />
+
+        <div class="sales-order-list">
+
+            <h5>Sales Order #: @_order.Id</h5>
+            <h5>Payment Status: @_paymentStatus</h5>
+
+            <br />
+
+            <OrderItemTable ItemList="_orderItems" />
+
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="bg-dark bg-gradient text-light">
+                    <tr>
+                        <th colspan="3" class="text-center" style="width:auto;"></th>
+                        <th scope="col" class="text-center" style="width:21.4%;">Grand Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" class="align-middle text-center">Balance due upon receipt:</td>
+                        <td scope="col" class="align-middle text-center">@_grandTotal.ToString("c")</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+}
+else
+{
+    <span>Loading order...</span>
+}
 
 @code {
+    private SalesOrderViewModel _order = new SalesOrderViewModel();
+    private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
+    private double _grandTotal;
+    private string _paymentStatus = "Not Paid";
 
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _order = await OrderHttpRepository.GetOrderById(Id);
+
+        if (_order.IsPaid)
+            _paymentStatus = "Paid";
+
+        foreach (var item in _order.OrderItems)
+        {
+            _orderItems.Add(item);
+            _grandTotal += item.Quantity * item.Product.Price;
+        }
+    }
+
+    private void NavigateBack() 
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
 }

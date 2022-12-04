@@ -1,4 +1,5 @@
 ﻿@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 @if (OrderList.Count > 0)
 {
@@ -49,7 +50,7 @@
             }
 
             <td class="align-middle text-center">
-                <i class="oi oi-eye text-info p-2" @onclick="() => Complete(order.Id)"></i>
+                <i class="oi oi-eye text-info p-2" @onclick="() => NavigateToPreview(order.Id)"></i>
             </td>
        
         </RowTemplate>
@@ -72,8 +73,18 @@ else
     [Parameter]
     public EventCallback<Guid> OnCompleted { get; set; }
 
-    private void Complete(Guid orderId) 
+    private async Task Complete(Guid orderId) 
     {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to mark this order fulfilled?");
+        if (confirmed)
+        {
+            await OnCompleted.InvokeAsync(orderId);
+        }
+    }
 
+    private void NavigateToPreview(Guid id)
+    {
+        var url = Path.Combine("/orderPreview", id.ToString());
+        NavigationManager.NavigateTo(url);
     }
 }

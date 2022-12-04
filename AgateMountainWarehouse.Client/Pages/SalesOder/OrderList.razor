@@ -17,7 +17,7 @@
     {
         <div class="row">
             <div class="col mt-2">
-                <OrderTable OrderList="OpenOrders" IsClosed="false" />
+                <OrderTable OrderList="OpenOrders" IsClosed="false" OnCompleted="CompleteOrder" />
             </div>
         </div>
         <div class="row">
@@ -81,6 +81,8 @@
         var pagingResponse = await OrderHttpRepository.GetOrders(_pagingParameters);
         AllOrders = pagingResponse.Items;
         MetaData = pagingResponse.MetaData;
+        ClosedOrders.Clear();
+        OpenOrders.Clear();
 
         foreach (var order in AllOrders)
         {
@@ -93,14 +95,17 @@
                 OpenOrders.Add(order);
             }
         }
-
-        Console.WriteLine("All Orders: " + AllOrders.Count().ToString());
-        Console.WriteLine("Open Orders: " + OpenOrders.Count().ToString());
-        Console.WriteLine("Closed Orders: " + ClosedOrders.Count().ToString());
     }
 
     private void NewOrder() 
     {
         NavigationManager.NavigateTo("/generateOrder");
+    }
+
+    private async Task CompleteOrder(Guid id)
+    {
+        await OrderHttpRepository.MarkFulfilled(id);
+        _pagingParameters.PageNumber = 1;
+        await GetOrders();
     }
 }

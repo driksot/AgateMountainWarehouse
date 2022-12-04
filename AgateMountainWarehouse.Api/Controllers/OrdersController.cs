@@ -45,7 +45,7 @@ public class OrdersController : ControllerBase
         return Created("", order);
     }
 
-    [HttpPatch("/complete/{id}")]
+    [HttpPatch("{id}")]
     public async Task<IActionResult> MarkFulfilled(Guid id)
     {
         await _salesOrderRepository.MarkFulfilled(id);
