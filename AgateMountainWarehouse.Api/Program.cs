@@ -1,4 +1,5 @@
 using AgateMountainWarehouse.Api;
+using AgateMountainWarehouse.Api.Middleware;
 using AgateMountainWarehouse.Application;
 using AgateMountainWarehouse.Infrastructure;
 using Microsoft.Extensions.FileProviders;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    app.UseMiddleware<ExceptionMiddleware>();
+
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
