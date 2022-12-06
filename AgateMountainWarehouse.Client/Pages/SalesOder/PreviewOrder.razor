@@ -2,9 +2,10 @@
 
 @inject IOrderHttpRepository OrderHttpRepository
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <div class="float-end">
-    <button type="button" class="btn btn-success">Print Order</button>
+    <button type="button" class="btn btn-success" @onclick="PrintOrder">Print Order</button>
     <button type="button" class="btn btn-primary ms-2" @onclick="NavigateBack">Back</button>
 </div>
 
@@ -14,7 +15,7 @@
     <br />
     <hr />
 
-    <section>
+    <section id="print-pdf">
 
         <div>
             <h5>1234 Agate Mountain Dr.</h5>
@@ -83,5 +84,10 @@ else
     private void NavigateBack() 
     {
         NavigationManager.NavigateTo("/orders");
+    }
+
+    private async Task PrintOrder() 
+    {
+        await JSRuntime.InvokeVoidAsync("Print");
     }
 }

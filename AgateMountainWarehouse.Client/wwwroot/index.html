@@ -20,6 +20,19 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script src="jquery/jquery.min.js"></script>
+    <script type="text/javascript">
+        function Print() {
+            const sectionContent = document.getElementById("print-pdf").innerHTML;
+            let a = window.open('', '', 'height=600,width=600');
+            a.document.write('<html>');
+            a.document.write('<body><br/>');
+            a.document.write(sectionContent);
+            a.document.write('</body></html>');
+            a.document.close();
+            a.print();
+        }
+    </script>
 </body>
 
 </html>
