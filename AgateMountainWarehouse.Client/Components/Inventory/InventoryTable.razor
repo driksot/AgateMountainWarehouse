@@ -28,17 +28,18 @@
                 @inventory.Product.Name
             </td>
             <td class="align-middle">
-                <EditForm Model="inventory" class="row">
+                <EditForm Model="inventory" class="row" OnValidSubmit="() => AdjustQuantity(inventory.Id, inventory.QuantityOnHand)">
+                    <DataAnnotationsValidator />
                     <div class="form-group col-9">
                         <InputNumber class="form-control"
                                  @bind-Value="inventory.QuantityOnHand">
                         </InputNumber>
+                        <ValidationMessage For="@(() => inventory.QuantityOnHand)" />
                     </div>
                     <div class="col-3">
                         <button 
                             type="submit" 
-                            class="btn btn-success"
-                            @onclick="() => AdjustQuantity(inventory.Id, inventory.QuantityOnHand)">Save</button>
+                            class="btn btn-success">Save</button>
                     </div>
                 </EditForm>
             </td>
