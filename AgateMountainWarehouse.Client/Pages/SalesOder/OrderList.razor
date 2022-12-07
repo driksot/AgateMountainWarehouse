@@ -1,0 +1,111 @@
+﻿@page "/orders"
+
+@inject IOrderHttpRepository OrderHttpRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Sales Orders</PageTitle>
+
+<button class="btn btn-primary" @onclick="() => NewOrder()">Generate New Order</button>
+
+<br/>
+
+<section class="py-4">
+
+    <h2>Open Orders</h2>
+
+    @if (OpenOrders.Count > 0) 
+    {
+        <div class="row">
+            <div class="col mt-2">
+                <OrderTable OrderList="OpenOrders" IsClosed="false" OnCompleted="CompleteOrder" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
+            </div>
+        </div>
+    }
+    else 
+    {
+        <span>No Open Orders</span>
+    } 
+
+</section>
+
+<section>
+
+    <h2>Closed Orders</h2>
+
+    @if (ClosedOrders.Count > 0) 
+    {
+        <div class="row">
+            <div class="col mt-2">
+                <OrderTable OrderList="ClosedOrders" IsClosed="true" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
+            </div>
+        </div>
+    }
+    else 
+    {
+        <span>No Closed Orders</span>
+    }
+
+</section>
+
+@code {
+    public List<SalesOrderViewModel> AllOrders { get; set; } = new List<SalesOrderViewModel>();
+    public List<SalesOrderViewModel> OpenOrders { get; set; } = new List<SalesOrderViewModel>();
+    public List<SalesOrderViewModel> ClosedOrders { get; set; } = new List<SalesOrderViewModel>();
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+    public string Type { get; set; } = string.Empty;
+    private PagingParameters _pagingParameters = new PagingParameters();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        _pagingParameters.PageNumber = page;
+        await GetOrders();
+    }
+
+    private async Task GetOrders()
+    {
+        var pagingResponse = await OrderHttpRepository.GetOrders(_pagingParameters);
+        AllOrders = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+        ClosedOrders.Clear();
+        OpenOrders.Clear();
+
+        foreach (var order in AllOrders)
+        {
+            if (order.IsPaid) 
+            {
+                ClosedOrders.Add(order);
+            }
+            else 
+            {
+                OpenOrders.Add(order);
+            }
+        }
+    }
+
+    private void NewOrder() 
+    {
+        NavigationManager.NavigateTo("/generateOrder");
+    }
+
+    private async Task CompleteOrder(Guid id)
+    {
+        await OrderHttpRepository.MarkFulfilled(id);
+        _pagingParameters.PageNumber = 1;
+        await GetOrders();
+    }
+}

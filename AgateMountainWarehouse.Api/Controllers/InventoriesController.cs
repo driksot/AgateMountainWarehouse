@@ -1,4 +1,5 @@
 ﻿using AgateMountainWarehouse.Api.Dtos;
+using AgateMountainWarehouse.Api.Errors;
 using AgateMountainWarehouse.Application.Interfaces;
 using AgateMountainWarehouse.Application.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
@@ -18,26 +19,34 @@ public class InventoriesController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
     {
         var inventories = await _inventoryRepository.GetInventories(pagingParameters);
+        if (inventories is null) return NotFound(new ApiResponse(404));
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(inventories.MetaData));
 
         return Ok(inventories);
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByProductId(Guid id)
     {
         var inventory = await _inventoryRepository.GetInventoryByProductId(id);
+        if (inventory is null) return NotFound(new ApiResponse(404));
+
         return Ok(inventory);
     }
 
     [HttpPatch]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateQuantity([FromBody] InventoryAdjustment inventoryAdjustment)
     {
-        if(!ModelState.IsValid)
-            return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(new ApiResponse(400));
 
         var id = inventoryAdjustment.InventoryId;
         var adjustment = inventoryAdjustment.Adjustment;
@@ -48,11 +57,12 @@ public class InventoriesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var inventory = await _inventoryRepository.GetInventoryById(id);
-        if (inventory is null)
-            return NotFound();
+        if (inventory is null) return NotFound(new ApiResponse(404));
 
         await _inventoryRepository.DeleteInventory(inventory);
 

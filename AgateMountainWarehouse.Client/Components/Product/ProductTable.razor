@@ -31,7 +31,7 @@
                 @product.Name
             </td>
             <td class="align-middle">
-                $@product.Price
+                @product.Price.ToString("c")
             </td>
             <td class="align-middle text-center">
                 <i class="oi oi-pencil text-secondary p-2" @onclick="() => NavigateToUpdate(product.Id)"></i>

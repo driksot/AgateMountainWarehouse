@@ -1,0 +1,186 @@
+﻿@page "/generateOrder"
+
+@inject IOrderHttpRepository OrderHttpRepository
+@inject IProductHttpRepository ProductHttpRepository
+@inject IInventoryHttpRepository InventoryHttpRepository
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Generate Order</PageTitle>
+
+<div class="d-flex justify-content-between">
+    <h2>Generate Sales Order</h2>
+
+    <button type="button" class="btn btn-primary ms-2" @onclick="NavigateBack">Back</button>
+</div>
+
+@if (_orderItems.Count > 0)
+{
+    <EditForm Model="_selectedOrderItem" OnValidSubmit="AddLineItem" class="card card-body bg-light my-4">
+        <DataAnnotationsValidator />
+
+        <div class="row mb-2">
+            <div class="col-md-10">
+                <label for="product" class="col-form-label">Product:</label>
+                <div class="">
+                    <select id="product" @bind="_selectedOrderItem.Id" class="form-control">
+                        <option value="" disabled selected hidden>Please select a Product</option>
+                        @foreach (var item in _orderItems)
+                        {
+                            <option value="@item.Id" key>@item.Product.Name</option>
+                        }
+                    </select>
+                    <ValidationMessage For="@(() => _selectedOrderItem.Product)" />
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <label for="quantity" class="col-form-label">Quantity:</label>
+                <div class="">
+                    <InputNumber id="quantity" @bind-Value="@_selectedOrderItem.Quantity" class="form-control" />
+                    <ValidationMessage For="@(() => _selectedOrderItem.Quantity)" />
+                </div>
+            </div>
+
+        </div>
+
+        <br />
+
+        <div>
+            <div class="float-end">
+                <button type="submit" class="btn btn-success">Add Line Item</button>
+                <button type="button" class="btn btn-primary ms-2" @onclick="FinalizeOrder">Finalize Order</button>
+            </div>
+        </div>
+
+    </EditForm>
+}
+else
+{
+    <span>Loading form...</span>
+}
+
+<OrderItemTable ItemList="_selectedOrderItems" />
+
+<SuccessNotification @ref="_notification" NavUrl="@_navUrl" />
+
+@code {
+    private SalesOrderViewModel _order = new SalesOrderViewModel();
+    private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
+    private List<SalesOrderItemViewModel> _selectedOrderItems = new List<SalesOrderItemViewModel>();
+    private SalesOrderItemViewModel _selectedOrderItem = new SalesOrderItemViewModel();
+    private InventoryViewModel _selectedInventory = new InventoryViewModel();
+    private SuccessNotification _notification = new SuccessNotification();
+    private string _navUrl = "/orders";
+
+    public List<ProductViewModel> Products = new List<ProductViewModel>();
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+    private PagingParameters _pagingParameters = new PagingParameters();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pagingParameters.SetPrivatePageSize("PageSize", 50);
+
+        await GetProducts();
+    }
+
+    private async Task GetProducts()
+    {
+        var pagingResponse = await ProductHttpRepository.GetProducts(_pagingParameters);
+        Products = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+
+        foreach (var prod in Products)
+        {
+            var item = new SalesOrderItemViewModel
+                {
+                    Id = prod.Id,
+                    Product = prod
+                };
+
+            _orderItems.Add(item);
+        }
+    }
+
+    private async Task AddLineItem() 
+    {
+        var product = await ProductHttpRepository.GetProductById(_selectedOrderItem.Id.ToString());
+
+        _selectedOrderItem.Product = product;
+
+        // Validate order item quantity is not more than product inventory quantity on hand
+        var isAvailableQuantity = await IsQuantityOnHand(_selectedOrderItem);
+        if (!isAvailableQuantity) 
+        {
+            // Pop up an alert informing desired quantity is not available
+            await JSRuntime.InvokeVoidAsync(
+                "alert", 
+                $"Inventory has insufficient quantity of {_selectedInventory.QuantityOnHand}");
+            return;
+        }
+
+        var itemExists = false;
+
+        // Add to quantity of order item if already present in list
+        foreach (var item in _selectedOrderItems)
+        {
+            if (_selectedOrderItem.Id == item.Id) 
+            {
+                itemExists = true;
+                item.Quantity += _selectedOrderItem.Quantity;
+            }
+        }
+
+        if (!itemExists) 
+            _selectedOrderItems.Add(_selectedOrderItem);
+
+        _selectedOrderItem = new SalesOrderItemViewModel();
+    }
+
+    private async Task FinalizeOrder() 
+    {
+        double totalCost = 0;
+
+        foreach (var item in _selectedOrderItems)
+        {
+            totalCost += item.Product.Price * item.Quantity;
+        }
+
+        _order.OrderItems = _selectedOrderItems;
+        _order.TotalCost = totalCost;
+
+        await OrderHttpRepository.GenerateOrder(_order);
+        _notification.Show();
+    }
+
+    private void Cancel() 
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
+
+    private async Task<bool> IsQuantityOnHand(SalesOrderItemViewModel orderItem) 
+    {
+        var product = orderItem.Product;
+        _selectedInventory = await InventoryHttpRepository.GetInventoryByProductId(product.Id.ToString());
+        var inventoryQuantityOnHand = _selectedInventory.QuantityOnHand;
+        var currentListQuantity = 0;
+
+        foreach (var item in _selectedOrderItems)
+        {
+            if (item.Id == orderItem.Id) 
+            {
+                currentListQuantity += item.Quantity;
+            }
+        }
+
+        if (orderItem.Quantity + currentListQuantity > inventoryQuantityOnHand)
+            return false;
+
+        return true;
+    }
+}

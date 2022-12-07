@@ -1,0 +1,9 @@
+﻿@page "/admin"
+@attribute [Authorize]
+
+<h3>Product Admin</h3>
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+}
