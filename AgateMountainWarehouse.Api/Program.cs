@@ -30,6 +30,7 @@ var app = builder.Build();
         FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"StaticFiles")),
         RequestPath = new PathString("/StaticFiles")
     });
+    app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
     app.Run();

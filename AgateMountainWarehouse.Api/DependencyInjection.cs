@@ -1,4 +1,7 @@
-﻿namespace AgateMountainWarehouse.Api;
+﻿using AgateMountainWarehouse.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+
+namespace AgateMountainWarehouse.Api;
 
 public static class DependencyInjection
 {
@@ -12,6 +15,9 @@ public static class DependencyInjection
                 .AllowAnyMethod()
                 .WithExposedHeaders("X-Pagination"));
         });
+
+        services.AddIdentity<IdentityUser, IdentityRole>()
+            .AddEntityFrameworkStores<WarehouseDbContext>();
 
         services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

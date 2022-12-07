@@ -16,6 +16,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
     builder.Services.AddScoped<IProductHttpRepository, ProductHttpRepository>();
     builder.Services.AddScoped<IInventoryHttpRepository, InventoryHttpRepository>();
     builder.Services.AddScoped<IOrderHttpRepository, OrderHttpRepository>();
+    builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
     builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
 
     builder.Services.AddAuthorizationCore();
