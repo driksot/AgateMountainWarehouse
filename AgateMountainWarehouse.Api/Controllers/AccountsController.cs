@@ -43,6 +43,8 @@ public class AccountsController : ControllerBase
             return BadRequest(new RegistrationResponseDto { Errors = errors });
         }
 
+        await _userManager.AddToRoleAsync(user, "Employee");
+
         return StatusCode(StatusCodes.Status201Created);
     }
 
@@ -55,7 +57,7 @@ public class AccountsController : ControllerBase
             return Unauthorized(new AuthResponseDto { ErrorMessage = "Invalid Authentication" });
 
         var signingCredentials = GetSigningCredentials();
-        var claims = GetClaims(user);
+        var claims = await GetClaims(user);
         var tokenOptions = GernerateTokenOptions(signingCredentials, claims);
         var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
@@ -74,12 +76,18 @@ public class AccountsController : ControllerBase
         return tokenOptions;
     }
 
-    private List<Claim> GetClaims(IdentityUser user)
+    private async Task<List<Claim>> GetClaims(IdentityUser user)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Email)
         };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         return claims;
     }

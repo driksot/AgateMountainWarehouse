@@ -36,7 +36,7 @@ public class AuthenticationService : IAuthenticationService
             return result;
 
         await _localStorage.SetItemAsync("authToken", result.Token);
-        ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(userAuthentication.Email);
+        ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(result.Token);
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
 
         return new AuthResponseViewModel { IsAuthSuccessful = true };
