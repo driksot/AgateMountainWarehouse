@@ -2,6 +2,10 @@
 using AgateMountainWarehouse.Api.Errors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AgateMountainWarehouse.Api.Controllers;
 
@@ -10,10 +14,14 @@ namespace AgateMountainWarehouse.Api.Controllers;
 public class AccountsController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly IConfiguration _configuration;
+    private readonly IConfigurationSection _configurationSection;
 
-    public AccountsController(UserManager<IdentityUser> userManager)
+    public AccountsController(UserManager<IdentityUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
+        _configuration = configuration;
+        _configurationSection = _configuration.GetSection("JwtSettings");
     }
 
     [HttpPost("Registration")]
@@ -36,5 +44,51 @@ public class AccountsController : ControllerBase
         }
 
         return StatusCode(StatusCodes.Status201Created);
+    }
+
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login([FromBody] UserAuthenticationDto userAuthentication)
+    {
+        var user = await _userManager.FindByNameAsync(userAuthentication.Email);
+
+        if (user is null || !await _userManager.CheckPasswordAsync(user, userAuthentication.Password))
+            return Unauthorized(new AuthResponseDto { ErrorMessage = "Invalid Authentication" });
+
+        var signingCredentials = GetSigningCredentials();
+        var claims = GetClaims(user);
+        var tokenOptions = GernerateTokenOptions(signingCredentials, claims);
+        var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+        return Ok(new AuthResponseDto { IsAuthSuccessful = true, Token = token });
+    }
+
+    private JwtSecurityToken GernerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+    {
+        var tokenOptions = new JwtSecurityToken(
+        issuer: _configurationSection["validIssuer"],
+        audience: _configurationSection["validAudience"],
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configurationSection["expiryInMinutes"])),
+        signingCredentials: signingCredentials);
+
+        return tokenOptions;
+    }
+
+    private List<Claim> GetClaims(IdentityUser user)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Email)
+        };
+
+        return claims;
+    }
+
+    private SigningCredentials GetSigningCredentials()
+    {
+        var key = Encoding.UTF8.GetBytes(_configurationSection["securityKey"]);
+        var secret = new SymmetricSecurityKey(key);
+
+        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 }
