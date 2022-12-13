@@ -4,6 +4,7 @@ using AgateMountainWarehouse.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgateMountainWarehouse.Infrastructure.Migrations
 {
     [DbContext(typeof(WarehouseDbContext))]
-    partial class WarehouseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221210180423_InitialRoleSeed")]
+    partial class InitialRoleSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,83 +24,6 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AddressId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.CustomerAddress", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AddressLine1")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("AddressLine2")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
-
-                    b.Property<DateTime?>("UpdatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CustomerAddresses");
-                });
 
             modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.Inventory", b =>
                 {
@@ -126,88 +52,60 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f3ec15b3-d2d7-45a4-b0ff-ab16adc3e035"),
+                            Id = new Guid("a47b5f49-b82f-4d0b-9302-dfa4f93ad657"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("ffbc3199-8546-4699-a532-c10a32c564cc"),
                             QuantityOnHand = 4
                         },
                         new
                         {
-                            Id = new Guid("c1837bdd-5195-4f47-a1e8-2ba38b1adb3c"),
+                            Id = new Guid("31c4b005-0057-41bd-9e4b-1b9dfb80ba27"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("b8552865-4078-4e4b-8d20-ff0d14d87d8d"),
                             QuantityOnHand = 7
                         },
                         new
                         {
-                            Id = new Guid("a9569f7a-a969-409c-b644-fd7eb9df532d"),
+                            Id = new Guid("95d026cc-68d2-4ddc-9ca4-f7a451fe33f1"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("6f6977f5-a099-4add-94f3-1fdcb5e06b92"),
                             QuantityOnHand = 3
                         },
                         new
                         {
-                            Id = new Guid("1e0a9157-9f55-4d6d-b7e8-20a1cce917cc"),
+                            Id = new Guid("6e0eada5-0e32-422d-aedb-3f76951ee276"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("4ef32bc9-536f-4231-8934-f3ce9d48d111"),
                             QuantityOnHand = 4
                         },
                         new
                         {
-                            Id = new Guid("88a8f2be-00de-4c21-b0ae-b5e4e9fa249e"),
+                            Id = new Guid("1accebb7-8b48-4061-adbd-2f1b71024403"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("9af4201d-22d7-4579-bc40-341f345cb747"),
                             QuantityOnHand = 12
                         },
                         new
                         {
-                            Id = new Guid("03d95ebd-a046-4649-b886-c22b8aa5714a"),
+                            Id = new Guid("06c58145-c816-4508-8c61-8ad7e3658496"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("1c5ab034-4ba0-4fb5-9f07-13b06d8f155b"),
                             QuantityOnHand = 8
                         },
                         new
                         {
-                            Id = new Guid("41e6def8-4eb1-4be8-a2b6-d2e9f11a19c3"),
+                            Id = new Guid("2d9cceda-a35e-4652-8c9e-684d24cccdc2"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("7aad8902-45d5-4185-a2e6-cf466abbbb84"),
                             QuantityOnHand = 11
                         },
                         new
                         {
-                            Id = new Guid("1a8f4ee5-e1e9-4666-9309-121594c3d69e"),
+                            Id = new Guid("69e4a763-c117-4c98-abc8-20a3ae532eba"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("ae5e0036-8551-4dab-9e41-674d27b4a8b2"),
                             QuantityOnHand = 9
                         });
-                });
-
-            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.InventorySnapshot", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("InventoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("SnapshotQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SnapshotTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InventoryId");
-
-                    b.ToTable("InventorySnapshots");
                 });
 
             modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.Product", b =>
@@ -245,82 +143,82 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("ffbc3199-8546-4699-a532-c10a32c564cc"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9708),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(339),
                             Description = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/labradorite.png",
                             Name = "Labradorite",
                             Price = 35.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9718)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(348)
                         },
                         new
                         {
                             Id = new Guid("b8552865-4078-4e4b-8d20-ff0d14d87d8d"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9723),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(357),
                             Description = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/turquoise.png",
                             Name = "Turquoise",
                             Price = 20.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9724)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(357)
                         },
                         new
                         {
                             Id = new Guid("6f6977f5-a099-4add-94f3-1fdcb5e06b92"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9726),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(359),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/star-garnet.jpg",
                             Name = "Star Garnet",
                             Price = 25.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9727)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(360)
                         },
                         new
                         {
                             Id = new Guid("4ef32bc9-536f-4231-8934-f3ce9d48d111"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9729),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(361),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/jasper.jpg",
                             Name = "Jasper",
                             Price = 20.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9730)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(362)
                         },
                         new
                         {
                             Id = new Guid("9af4201d-22d7-4579-bc40-341f345cb747"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9732),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(363),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/fire-opal.jpg",
                             Name = "Fire Opal",
                             Price = 18.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9733)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(364)
                         },
                         new
                         {
                             Id = new Guid("1c5ab034-4ba0-4fb5-9f07-13b06d8f155b"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9734),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(365),
                             Description = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/amethyst.jpg",
                             Name = "Amethyst",
                             Price = 22.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9735)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(366)
                         },
                         new
                         {
                             Id = new Guid("7aad8902-45d5-4185-a2e6-cf466abbbb84"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9737),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(367),
                             Description = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/gold-wire.jpg",
                             Name = "26 Gauge Gold Wire",
                             Price = 9.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9738)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(368)
                         },
                         new
                         {
                             Id = new Guid("ae5e0036-8551-4dab-9e41-674d27b4a8b2"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9739),
+                            CreatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(369),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
                             ImageUrl = "https://localhost:7252/StaticFiles//Images/gold-wire.jpg",
                             Name = "24 Gauge Gold Wire",
                             Price = 8.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9740)
+                            UpdatedDateTime = new DateTime(2022, 12, 10, 11, 4, 23, 648, DateTimeKind.Local).AddTicks(370)
                         });
                 });
 
@@ -371,7 +269,75 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.ToTable("SalesOrderItems");
                 });
 
-            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.User", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "2a523bc7-bdd1-4dc1-81ec-26e99c548740",
+                            ConcurrencyStamp = "550b7cb3-ec28-4fb8-8ded-155bf10cdeb5",
+                            Name = "Empolyee",
+                            NormalizedName = "EMPLOYEE"
+                        },
+                        new
+                        {
+                            Id = "57bb2595-9b5a-41d1-8081-17be07cbe7b3",
+                            ConcurrencyStamp = "154dbe17-a996-4a5c-988d-152ec06ce573",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -413,13 +379,6 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -441,74 +400,6 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "37986ac3-d513-46e0-8ff6-fda7ec2f0faf",
-                            ConcurrencyStamp = "588defae-5d27-496d-b152-b133175cad1e",
-                            Name = "Empolyee",
-                            NormalizedName = "EMPLOYEE"
-                        },
-                        new
-                        {
-                            Id = "baa877c2-849b-462d-964d-354968f1918c",
-                            ConcurrencyStamp = "419d69fa-0259-4173-9085-ab687db514c8",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -592,17 +483,6 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.Customer", b =>
-                {
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.CustomerAddress", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-                });
-
             modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.Inventory", b =>
                 {
                     b.HasOne("AgateMountainWarehouse.Domain.Entities.Product", "Product")
@@ -612,17 +492,6 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.InventorySnapshot", b =>
-                {
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.Inventory", "Inventory")
-                        .WithMany()
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Inventory");
                 });
 
             modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.SalesOrderItem", b =>
@@ -651,7 +520,7 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.User", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -660,7 +529,7 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.User", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -675,7 +544,7 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.User", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -684,7 +553,7 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.User", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

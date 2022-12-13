@@ -1,6 +1,9 @@
 ﻿@page "/updateProduct/{id}"
 
+@implements IDisposable
+
 @inject IProductHttpRepository ProductHttpRepository
+@inject HttpInterceptorService Interceptor
 @inject NavigationManager NavigationManager
 
 <h2>Update Product</h2>
@@ -61,6 +64,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Interceptor.RegisterEvent();
         _product = await ProductHttpRepository.GetProductById(Id);
     }
 
@@ -78,5 +82,10 @@
     private void Cancel()
     {
         NavigationManager.NavigateTo("/products");
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
     }
 }

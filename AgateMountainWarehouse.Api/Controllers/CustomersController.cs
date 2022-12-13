@@ -8,16 +8,15 @@ using Newtonsoft.Json;
 
 namespace AgateMountainWarehouse.Api.Controllers;
 
-[Route("api/products")]
+[Route("api/customers")]
 [ApiController]
-[Authorize]
-public class ProductsController : ControllerBase
+public class CustomersController : ControllerBase
 {
-    private readonly IProductRepository _productRepository;
+    private readonly ICustomerRepository _customerRepository;
 
-    public ProductsController(IProductRepository productRepository)
+    public CustomersController(ICustomerRepository customerRepository)
     {
-        _productRepository = productRepository;
+        _customerRepository = customerRepository;
     }
 
     [HttpGet]
@@ -25,11 +24,11 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
     {
-        var products = await _productRepository.GetProducts(pagingParameters);
-        if (products is null) return NotFound(new ApiResponse(404));
-        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(products.MetaData));
+        var customers = await _customerRepository.GetCustomers(pagingParameters);
+        if (customers is null) return NotFound(new ApiResponse(404));
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(customers.MetaData));
 
-        return Ok(products);
+        return Ok(customers);
     }
 
     [HttpGet("{id}")]
@@ -37,34 +36,33 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var product = await _productRepository.GetProductById(id);
+        var customer = await _customerRepository.GetCustomerById(id);
+        if (customer is null) return NotFound(new ApiResponse(404));
 
-        if (product is null) return NotFound(new ApiResponse(404));
-
-        return Ok(product);
+        return Ok(customer);
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] Product product)
+    public async Task<IActionResult> Create([FromBody] Customer customer)
     {
-        if (product is null) return BadRequest(new ApiResponse(400));
+        if (customer is null) return BadRequest(new ApiResponse(400));
 
-        await _productRepository.CreateProduct(product);
+        await _customerRepository.CreateCustomer(customer);
 
-        return Created("", product);
+        return Created("", customer);
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] Product product)
+    public async Task<IActionResult> Update(Guid id, [FromBody] Customer customer)
     {
-        var dbProduct = await _productRepository.GetProductById(id);
-        if (dbProduct is null) return NotFound(new ApiResponse(404));
+        var dbCustomer = await _customerRepository.GetCustomerById(id);
+        if (dbCustomer is null) return NotFound(new ApiResponse(404));
 
-        await _productRepository.UpdateProduct(product, dbProduct);
+        await _customerRepository.UpdateCustomer(customer, dbCustomer);
 
         return NoContent();
     }
@@ -74,10 +72,10 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var product = await _productRepository.GetProductById(id);
-        if (product is null) return NotFound(new ApiResponse(404));
+        var customer = await _customerRepository.GetCustomerById(id);
+        if (customer is null) return NotFound(new ApiResponse(404));
 
-        await _productRepository.DeleteProduct(product);
+        await _customerRepository.DeleteCustomer(customer);
 
         return NoContent();
     }
