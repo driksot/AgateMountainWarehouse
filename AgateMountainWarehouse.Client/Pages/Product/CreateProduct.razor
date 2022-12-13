@@ -1,6 +1,9 @@
 ﻿@page "/createProduct"
 
+@implements IDisposable
+
 @inject IProductHttpRepository ProductHttpRepository
+@inject HttpInterceptorService Interceptor
 @inject NavigationManager NavigationManager
 
 <h2>Create Product</h2>
@@ -56,6 +59,11 @@
     private SuccessNotification _notification = new SuccessNotification();
     private string _navUrl = "/products";
 
+    protected override void OnInitialized()
+    {
+        Interceptor.RegisterEvent();
+    }
+
     private async Task Create()
     {
         await ProductHttpRepository.CreateProduct(_product);
@@ -70,5 +78,10 @@
     private void Cancel()
     {
         NavigationManager.NavigateTo("/products");
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
     }
 }

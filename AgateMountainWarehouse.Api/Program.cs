@@ -7,7 +7,7 @@ using Microsoft.Extensions.FileProviders;
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services
-        .AddPresentation()
+        .AddPresentation(builder.Configuration)
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
 }
@@ -30,6 +30,7 @@ var app = builder.Build();
         FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"StaticFiles")),
         RequestPath = new PathString("/StaticFiles")
     });
+    app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
     app.Run();

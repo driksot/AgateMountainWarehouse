@@ -2,6 +2,7 @@
 using AgateMountainWarehouse.Application.Interfaces;
 using AgateMountainWarehouse.Application.RequestFeatures;
 using AgateMountainWarehouse.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@ namespace AgateMountainWarehouse.Api.Controllers;
 
 [Route("api/products")]
 [ApiController]
+[Authorize]
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;

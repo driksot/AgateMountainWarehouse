@@ -1,10 +1,12 @@
 ﻿using AgateMountainWarehouse.Domain.Common;
 using AgateMountainWarehouse.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgateMountainWarehouse.Infrastructure;
 
-public class WarehouseDbContext : DbContext
+public class WarehouseDbContext : IdentityDbContext<User>
 {
 	public WarehouseDbContext(DbContextOptions<WarehouseDbContext> options)
 		: base(options)
@@ -13,7 +15,9 @@ public class WarehouseDbContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		modelBuilder.ApplyConfigurationsFromAssembly(typeof(WarehouseDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(WarehouseDbContext).Assembly);
 	}
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
