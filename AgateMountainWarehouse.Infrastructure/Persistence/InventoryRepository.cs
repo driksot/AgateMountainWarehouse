@@ -43,9 +43,11 @@ public class InventoryRepository : IInventoryRepository
 
     public async Task<Inventory> GetInventoryByProductId(Guid productId)
     {
-        return await _context.Inventories
+        var inventory = await _context.Inventories
             .Include(i => i.Product)
             .FirstOrDefaultAsync(i => i.ProductId.Equals(productId));
+
+        return inventory ?? new Inventory();
     }
 
     public async Task UpdateQuantityOnHand(Guid inventoryId, int adjustment)
@@ -56,13 +58,41 @@ public class InventoryRepository : IInventoryRepository
             .Include(i => i.Product)
             .FirstOrDefaultAsync(i => i.Id.Equals(inventoryId));
 
-            inventory.QuantityOnHand = adjustment;
+            if (inventory is not null)
+                inventory.QuantityOnHand = adjustment;
+
+            try
+            {
+                await CreateSnapshot();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task CreateSnapshot()
+    {
+        var inventories = await _context.Inventories.Include(i => i.Product).ToListAsync();
+
+        foreach (var inv in inventories)
+        {
+            var snapshot = new InventorySnapshot
+            {
+                InventoryId = inv.Id,
+                Inventory = inv,
+                SnapshotQuantity = inv.QuantityOnHand,
+                SnapshotTime = DateTime.Now
+            };
+
+            await _context.AddAsync(snapshot);
         }
     }
 }

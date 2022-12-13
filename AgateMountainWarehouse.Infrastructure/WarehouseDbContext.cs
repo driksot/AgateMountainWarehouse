@@ -1,6 +1,5 @@
 ﻿using AgateMountainWarehouse.Domain.Common;
 using AgateMountainWarehouse.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,20 +7,20 @@ namespace AgateMountainWarehouse.Infrastructure;
 
 public class WarehouseDbContext : IdentityDbContext<User>
 {
-	public WarehouseDbContext(DbContextOptions<WarehouseDbContext> options)
-		: base(options)
-	{
-	}
+    public WarehouseDbContext(DbContextOptions<WarehouseDbContext> options)
+        : base(options)
+    {
+    }
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
-	{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WarehouseDbContext).Assembly);
-	}
+    }
 
-	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-	{
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
         {
             entry.Entity.UpdatedDateTime = DateTime.Now;
@@ -37,6 +36,9 @@ public class WarehouseDbContext : IdentityDbContext<User>
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
+    public DbSet<InventorySnapshot> InventorySnapshots { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<CustomerAddress> CustomerAddresses { get; set; }
     public DbSet<SalesOrder> SalesOrders { get; set; }
     public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
 }
