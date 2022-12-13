@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AgateMountainWarehouse.Infrastructure;
 
-public class WarehouseDbContext : IdentityDbContext<IdentityUser>
+public class WarehouseDbContext : IdentityDbContext<User>
 {
 	public WarehouseDbContext(DbContextOptions<WarehouseDbContext> options)
 		: base(options)

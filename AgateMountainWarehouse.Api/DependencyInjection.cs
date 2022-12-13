@@ -1,4 +1,6 @@
-﻿using AgateMountainWarehouse.Infrastructure;
+﻿using AgateMountainWarehouse.Api.TokenHelpers;
+using AgateMountainWarehouse.Domain.Entities;
+using AgateMountainWarehouse.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +21,9 @@ public static class DependencyInjection
                 .WithExposedHeaders("X-Pagination"));
         });
 
-        services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddScoped<ITokenService, TokenService>();
+
+        services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<WarehouseDbContext>();
 
         var jwtSettings = configuration.GetSection("JWTSettings");

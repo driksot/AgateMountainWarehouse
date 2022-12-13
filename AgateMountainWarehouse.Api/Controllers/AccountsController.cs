@@ -1,5 +1,7 @@
 ﻿using AgateMountainWarehouse.Api.Dtos;
 using AgateMountainWarehouse.Api.Errors;
+using AgateMountainWarehouse.Api.TokenHelpers;
+using AgateMountainWarehouse.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,15 +15,15 @@ namespace AgateMountainWarehouse.Api.Controllers;
 [ApiController]
 public class AccountsController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IConfiguration _configuration;
-    private readonly IConfigurationSection _configurationSection;
+    private readonly UserManager<User> _userManager;
+    private readonly ITokenService _tokenService;
 
-    public AccountsController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+    public AccountsController(
+        UserManager<User> userManager, 
+        ITokenService tokenService)
     {
         _userManager = userManager;
-        _configuration = configuration;
-        _configurationSection = _configuration.GetSection("JwtSettings");
+        _tokenService = tokenService;
     }
 
     [HttpPost("Registration")]
@@ -29,7 +31,7 @@ public class AccountsController : ControllerBase
     {
         if (userRegistration is null || !ModelState.IsValid) return BadRequest(new ApiResponse(400));
 
-        var user = new IdentityUser
+        var user = new User
         {
             UserName = userRegistration.Email,
             Email = userRegistration.Email
@@ -56,47 +58,16 @@ public class AccountsController : ControllerBase
         if (user is null || !await _userManager.CheckPasswordAsync(user, userAuthentication.Password))
             return Unauthorized(new AuthResponseDto { ErrorMessage = "Invalid Authentication" });
 
-        var signingCredentials = GetSigningCredentials();
-        var claims = await GetClaims(user);
-        var tokenOptions = GernerateTokenOptions(signingCredentials, claims);
+        var signingCredentials = _tokenService.GetSigningCredentials();
+        var claims = await _tokenService.GetClaims(user);
+        var tokenOptions = _tokenService.GenerateTokenOptions(signingCredentials, claims);
         var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-        return Ok(new AuthResponseDto { IsAuthSuccessful = true, Token = token });
-    }
+        user.RefreshToken = _tokenService.GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-    private JwtSecurityToken GernerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
-    {
-        var tokenOptions = new JwtSecurityToken(
-        issuer: _configurationSection["validIssuer"],
-        audience: _configurationSection["validAudience"],
-        claims: claims,
-        expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configurationSection["expiryInMinutes"])),
-        signingCredentials: signingCredentials);
+        await _userManager.UpdateAsync(user);
 
-        return tokenOptions;
-    }
-
-    private async Task<List<Claim>> GetClaims(IdentityUser user)
-    {
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Email)
-        };
-
-        var roles = await _userManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        return claims;
-    }
-
-    private SigningCredentials GetSigningCredentials()
-    {
-        var key = Encoding.UTF8.GetBytes(_configurationSection["securityKey"]);
-        var secret = new SymmetricSecurityKey(key);
-
-        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+        return Ok(new AuthResponseDto { IsAuthSuccessful = true, Token = token, RefreshToken = user.RefreshToken });
     }
 }

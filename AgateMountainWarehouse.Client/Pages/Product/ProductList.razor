@@ -1,38 +1,44 @@
 ﻿@page "/products"
 
+@implements IDisposable
+
 @inject IProductHttpRepository ProductHttpRepository
+@inject HttpInterceptorService Interceptor
 @inject NavigationManager NavigationManager
 
 <AuthorizeView>
     <Authorized>
-        The user: @context.User.FindFirst(ClaimTypes.Name).Value is authorized
+
+        <div class="row">
+            <div class="col-md-2">
+                <button type="button"
+                        class="btn btn-primary"
+                        @onclick="AddProduct">
+                    Create Product
+                </button>
+            </div>
+            <div class="col-md-10">
+                <Search Type="@Type" OnSearchChanged="SearchChanged" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col mt-2">
+                <ProductTable ProductList="Products" OnSortChanged="SortChanged" OnDeleted="DeleteProduct" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
+            </div>
+        </div>
+
     </Authorized>
     <NotAuthorized>
+
         The User is not authorized
+
     </NotAuthorized>
 </AuthorizeView>
-
-<div class="row">
-    <div class="col-md-2">
-        <button
-            type="button" 
-            class="btn btn-primary"
-            @onclick="AddProduct">Create Product</button>
-    </div>
-    <div class="col-md-10">
-        <Search Type="@Type" OnSearchChanged="SearchChanged" />
-    </div>
-</div>
-<div class="row">
-    <div class="col mt-2">
-        <ProductTable ProductList="Products" OnSortChanged="SortChanged" OnDeleted="DeleteProduct" />
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
-    </div>
-</div>
 
 @code {
     public List<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
@@ -43,6 +49,7 @@
     protected override async Task OnInitializedAsync()
     {
         Type = "product";
+        Interceptor.RegisterEvent();
         await GetProducts();
     }
 
@@ -82,5 +89,10 @@
         await ProductHttpRepository.DeleteProduct(id);
         _pagingParameters.PageNumber = 1;
         await GetProducts();
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
     }
 }
