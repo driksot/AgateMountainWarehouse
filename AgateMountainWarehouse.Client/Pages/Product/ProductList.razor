@@ -4,91 +4,98 @@
 
 @inject IProductHttpRepository ProductHttpRepository
 @inject HttpInterceptorService Interceptor
-@inject NavigationManager NavigationManager
 
-<AuthorizeView>
-    <Authorized>
+<MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@($"Product Management".ToUpper())</MudText>
 
-        <div class="row">
-            <div class="col-md-2">
-                <button type="button"
-                        class="btn btn-primary"
-                        @onclick="AddProduct">
-                    Create Product
-                </button>
-            </div>
-            <div class="col-md-10">
-                <Search Type="@Type" OnSearchChanged="SearchChanged" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col mt-2">
-                <ProductTable ProductList="Products" OnSortChanged="SortChanged" OnDeleted="DeleteProduct" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
-            </div>
-        </div>
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<ProductViewModel>>>(ServerReload))"
+          Dense="true" Hover="true" Striped="true" Bordered="true" @ref="_table">
+        <ToolBarContent>
+            <MudButton Href="createproduct"
+                   DisableElevation
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   IconColor="Color.Surface">New Product</MudButton>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width: 5%" />
+            <col style="width: 10%" />
+            <col style="width: 50%" />
+            <col style="width: 5%" />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel T="ProductViewModel">Image</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name" T="ProductViewModel">Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="ProductViewModel">Description</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="price" T="ProductViewModel">Price</MudTableSortLabel></MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Image">
+                <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.ImageUrl" />
+            </MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Name">@context.Description</MudTd>
+            <MudTd DataLabel="Price">@context.Price.ToString("c")</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudButton Href="@($"updateproduct/{context.Id}")" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Class="ms-1 my-1">Edit</MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="ms-1 my-1">Delete</MudButton>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 
-    </Authorized>
-    <NotAuthorized>
-
-        The User is not authorized
-
-    </NotAuthorized>
-</AuthorizeView>
-
-@code {
-    public List<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
-    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
-    public string Type { get; set; } = string.Empty;
+    @code {
+    private IEnumerable<ProductViewModel> _products = new List<ProductViewModel>();
+    private MudTable<ProductViewModel> _table = new MudTable<ProductViewModel>();
     private PagingParameters _pagingParameters = new PagingParameters();
+    private int totalItems;
+    private string _searchString = string.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        Type = "product";
-        Interceptor.RegisterEvent();
-        await GetProducts();
-    }
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
 
-    private async Task SelectedPage(int page) 
+    private async Task<TableData<ProductViewModel>> ServerReload(TableState state)
     {
-        _pagingParameters.PageNumber = page;
-        await GetProducts();
-    }
+        _pagingParameters.SetPrivatePageSize("PageSize", state.PageSize);
+        _pagingParameters.PageNumber = state.Page + 1;
 
-    private async Task SearchChanged(string searchTerm) 
-    {
-        _pagingParameters.PageNumber = 1;
-        _pagingParameters.SearchTerm = searchTerm;
-        await GetProducts();
-    }
+        switch (state.SortLabel)
+        {
+            case "name":
+                _pagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "name desc"
+                    : "name";
+                break;
+            case "price":
+                _pagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "price desc"
+                    : "price";
+                break;
+        }
 
-    private async Task SortChanged(string orderBy) 
-    {
-        _pagingParameters.OrderBy = orderBy;
-        await GetProducts();
-    }
-
-    private async Task GetProducts() 
-    {
         var pagingResponse = await ProductHttpRepository.GetProducts(_pagingParameters);
-        Products = pagingResponse.Items;
+        _products = pagingResponse.Items;
         MetaData = pagingResponse.MetaData;
+
+        return new TableData<ProductViewModel>() { TotalItems = MetaData.TotalCount, Items = _products };
     }
 
-    private void AddProduct()
+    private void OnSearch(string searchText)
     {
-        NavigationManager.NavigateTo("/createproduct");
-    }
-
-    private async Task DeleteProduct(Guid id) 
-    {
-        await ProductHttpRepository.DeleteProduct(id);
-        _pagingParameters.PageNumber = 1;
-        await GetProducts();
+        _pagingParameters.SearchTerm = searchText;
+        _table.ReloadServerData();
     }
 
     public void Dispose()
