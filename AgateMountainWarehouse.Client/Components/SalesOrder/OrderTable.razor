@@ -84,7 +84,7 @@ else
 
     private void NavigateToPreview(Guid id)
     {
-        var url = Path.Combine("/orderPreview", id.ToString());
+        var url = Path.Combine("/invoice", id.ToString());
         NavigationManager.NavigateTo(url);
     }
 }

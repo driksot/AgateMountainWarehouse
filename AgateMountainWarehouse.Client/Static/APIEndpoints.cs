@@ -11,5 +11,6 @@ internal static class APIEndpoints
     internal readonly static string _products = "products";
     internal readonly static string _inventories = "inventories";
     internal readonly static string _orders = "orders";
+    internal readonly static string _customers = "customers";
 }
 
