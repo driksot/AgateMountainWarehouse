@@ -1,10 +1,30 @@
 ﻿<AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name!
-        <a href="Logout">Log out</a>
+        <MudText Typo="Typo.h5" Class="align-bottom me-1">
+            @($"Hello, {context.User.Identity.Name}!")
+        </MudText>
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Login"
+                   Color="Color.Tertiary"
+                   Class="ms-2"
+                   Href="Logout">
+            Log out
+        </MudButton>
     </Authorized>
     <NotAuthorized>
-        <a href="Registration">Register</a>
-        <a href="Login">Log in</a>
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.AppRegistration"
+                   Color="Color.Secondary"
+                   Class="ms-2"
+                   Href="Registration">
+            Register
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Login"
+                   Color="Color.Tertiary"
+                   Class="ms-2"
+                   Href="Login">
+            Log in
+        </MudButton>
     </NotAuthorized>
 </AuthorizeView>

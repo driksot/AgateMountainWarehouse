@@ -7,61 +7,60 @@
 
 <MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@($"Product Management".ToUpper())</MudText>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<ProductViewModel>>>(ServerReload))"
-          Dense="true" Hover="true" Striped="true" Bordered="true" @ref="_table">
-        <ToolBarContent>
-            <MudButton Href="createproduct"
-                   DisableElevation
-                   Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   IconColor="Color.Surface">New Product</MudButton>
-            <MudSpacer />
-            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        </ToolBarContent>
-        <ColGroup>
-            <col style="width: 5%" />
-            <col style="width: 10%" />
-            <col style="width: 50%" />
-            <col style="width: 5%" />
-            <col />
-        </ColGroup>
-        <HeaderContent>
-            <MudTh><MudTableSortLabel T="ProductViewModel">Image</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="name" T="ProductViewModel">Name</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel T="ProductViewModel">Description</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="price" T="ProductViewModel">Price</MudTableSortLabel></MudTh>
-            <MudTh>Actions</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Image">
-                <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.ImageUrl" />
-            </MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Name">@context.Description</MudTd>
-            <MudTd DataLabel="Price">@context.Price.ToString("c")</MudTd>
-            <MudTd DataLabel="Actions">
-                <MudButton Href="@($"updateproduct/{context.Id}")" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Class="ms-1 my-1">Edit</MudButton>
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="ms-1 my-1">Delete</MudButton>
-            </MudTd>
-        </RowTemplate>
-        <NoRecordsContent>
-            <MudText>No matching records found</MudText>
-        </NoRecordsContent>
-        <LoadingContent>
-            <MudText>Loading...</MudText>
-        </LoadingContent>
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
-    </MudTable>
+<MudTable ServerData="@(new Func<TableState, Task<TableData<ProductViewModel>>>(ServerReload))"
+        Dense="true" Hover="true" Striped="true" Bordered="true" @ref="_table">
+    <ToolBarContent>
+        <MudButton Href="createproduct"
+                DisableElevation
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Add"
+                IconColor="Color.Surface">New Product</MudButton>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width: 5%" />
+        <col style="width: 10%" />
+        <col style="width: 50%" />
+        <col style="width: 5%" />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="ProductViewModel">Image</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name" T="ProductViewModel">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ProductViewModel">Description</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="price" T="ProductViewModel">Price</MudTableSortLabel></MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Image">
+            <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.ImageUrl" />
+        </MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Name">@context.Description</MudTd>
+        <MudTd DataLabel="Price">@context.Price.ToString("c")</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudButton Href="@($"updateproduct/{context.Id}")" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Class="ms-1 my-1">Edit</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="ms-1 my-1">Delete</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 
-    @code {
+@code {
     private IEnumerable<ProductViewModel> _products = new List<ProductViewModel>();
     private MudTable<ProductViewModel> _table = new MudTable<ProductViewModel>();
     private PagingParameters _pagingParameters = new PagingParameters();
-    private int totalItems;
     private string _searchString = string.Empty;
 
     public PagingMetaData MetaData { get; set; } = new PagingMetaData();

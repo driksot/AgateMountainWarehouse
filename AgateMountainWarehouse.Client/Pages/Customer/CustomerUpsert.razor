@@ -1,0 +1,98 @@
+﻿@page "/customer/new"
+@page "/customer/edit/{id}"
+
+@implements IDisposable
+
+@inject ICustomerHttpRepository CustomerHttpRepository
+@inject HttpInterceptorService Interceptor
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@($"{_title} Customer".ToUpper())</MudText>
+
+    <EditForm Model="_customer" OnValidSubmit="HandleValidSubmit">
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudTextField @bind-Value="_customer.FirstName" Label="First Name" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField @bind-Value="_customer.LastName" Label="Last Name" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="_customer.Address.AddressLine1" Label="Address" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="_customer.Address.AddressLine2" Label="Address Cont." Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField @bind-Value="_customer.Address.City" Label="City" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudTextField @bind-Value="_customer.Address.State" Label="State" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="2">
+                        <MudTextField @bind-Value="_customer.Address.Country" Label="Country" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudTextField @bind-Value="_customer.Address.PostalCode" Label="Postal Code" Variant="Variant.Outlined" Class="mb-4" />
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+            <MudCardActions Class="ms-2 pb-2">
+                <MudButton Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.Save"
+                        Color="Color.Primary"
+                        ButtonType="MudBlazor.ButtonType.Submit">
+                    Save
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.ArrowBack"
+                        Color="Color.Secondary"
+                        Class="ms-2"
+                        Href="/customers">
+                    Back
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private CustomerViewModel _customer = new CustomerViewModel();
+    private string _title { get; set; } = "Add";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Id = Id ?? "1";
+        Interceptor.RegisterEvent();
+
+        if (Id.Length > 1)
+        {
+            _title = "Edit";
+            _customer = await CustomerHttpRepository.GetCustomerById(Id);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id.Length > 1)
+        {
+            await CustomerHttpRepository.UpdateCustomer(_customer);
+        }
+        else
+        {
+            await CustomerHttpRepository.CreateCustomer(_customer);
+        }
+
+        NavigationManager.NavigateTo("/customers");
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
+    }
+}
