@@ -13,7 +13,11 @@
     
     <AuthorizeView Roles="Administrator">
         <Authorized>
-            <MudNavLink Href="/admin" Match="NavLinkMatch.Prefix">Admin</MudNavLink>
+            <MudNavGroup Title="Admin" Expanded="true">
+                <MudNavLink Href="/customers/admin">Customers</MudNavLink>
+                <MudNavLink Href="/products/admin">Products</MudNavLink>
+                <MudNavLink Href="/orders/admin">Sales Orders</MudNavLink>
+            </MudNavGroup>
         </Authorized>
     </AuthorizeView>
 

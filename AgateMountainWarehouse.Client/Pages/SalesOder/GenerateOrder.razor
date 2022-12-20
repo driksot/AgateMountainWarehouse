@@ -24,6 +24,16 @@
         <MudCard Class="pa-4">
             <MudCardContent>
                 <MudGrid>
+                    <MudItem xs="12">
+                        <MudSelect @bind-Value="_selectedCustomer" Label="Customer">
+                            <MudSelectItem Value="_selectedCustomer">Select a Customer</MudSelectItem>
+                            @foreach (var customer in _customers)
+                            {
+                                <MudSelectItem Value="@customer">@($"{customer.FirstName} {customer.LastName}")</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <ValidationMessage For="@(() => _selectedCustomer)" />
+                    </MudItem>
                     <MudItem xs="10">
                         <MudSelect @bind-Value="_selectedOrderItem" Label="Product">
                             <MudSelectItem Value="_selectedOrderItem">Select a Product</MudSelectItem>
@@ -72,8 +82,10 @@ else
 @code {
     private SalesOrderViewModel _order = new SalesOrderViewModel();
     private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
+    private List<CustomerViewModel> _customers = new List<CustomerViewModel>();
     private List<SalesOrderItemViewModel> _selectedOrderItems = new List<SalesOrderItemViewModel>();
     private SalesOrderItemViewModel _selectedOrderItem = new SalesOrderItemViewModel();
+    private CustomerViewModel _selectedCustomer = new CustomerViewModel();
     private InventoryViewModel _selectedInventory = new InventoryViewModel();
     private SuccessNotification _notification = new SuccessNotification();
     private string _navUrl = "/orders";
@@ -155,6 +167,7 @@ else
 
         _order.OrderItems = _selectedOrderItems;
         _order.TotalCost = totalCost;
+        _order.Customer = _selectedCustomer;
 
         await OrderHttpRepository.GenerateOrder(_order);
         _notification.Show();

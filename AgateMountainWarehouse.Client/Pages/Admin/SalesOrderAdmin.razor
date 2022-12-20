@@ -1,4 +1,4 @@
-﻿@page "/orders"
+﻿@page "/orders/admin"
 
 @implements IDisposable
 
@@ -66,7 +66,7 @@
 
 </MudElement>
 
-<MudElement HtmlTag="section" Class="mt-2">
+<MudElement HtmlTag="section mt-2">
 
     <MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Closed Orders".ToUpper())</MudText>
 
@@ -116,7 +116,7 @@
 
 </MudElement>
 
-    @code {
+@code {
     private IEnumerable<SalesOrderViewModel> _allOrders = new List<SalesOrderViewModel>();
     private List<SalesOrderViewModel> _filteredOrders = new List<SalesOrderViewModel>();
     private MudTable<SalesOrderViewModel> _openTable = new MudTable<SalesOrderViewModel>();

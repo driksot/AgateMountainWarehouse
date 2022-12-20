@@ -56,6 +56,44 @@ public class InventoriesController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("snapshot")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetSnapshotHistory()
+    {
+        try
+        {
+            var snapshotHistory = await _inventoryRepository.GetSnapshotHistory();
+
+            var timelinePoints = snapshotHistory
+                .Select(snapshot => snapshot.SnapshotTime)
+                .Distinct()
+                .ToList();
+
+            var groupedSnapshots = snapshotHistory
+                .GroupBy(snapshot => snapshot.Product, snapshot => snapshot.SnapshotQuantity,
+                    (key, g) => new InventorySnapshotDto
+                    {
+                        ProductId = key.Id,
+                        QuantityOnHand = g.ToList()
+                    })
+                .OrderBy(snapshot => snapshot.ProductId)
+                .ToList();
+
+            var response = new InventorySnapshotResponse
+            {
+                Timeline = timelinePoints,
+                InventorySnapshots = groupedSnapshots
+            };
+
+            return Ok(response);
+        }
+        catch (Exception)
+        {
+            return BadRequest(new ApiResponse(400));
+        }
+    }
+
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
