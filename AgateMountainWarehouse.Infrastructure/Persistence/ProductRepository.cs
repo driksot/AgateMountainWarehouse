@@ -40,12 +40,6 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteProduct(Product product)
-    {
-        _context.Remove(product);
-        await _context.SaveChangesAsync();
-    }
-
     public async Task<Product> GetProductById(Guid productId)
     {
         return await _context.Products.FirstOrDefaultAsync(p => p.Id.Equals(productId));

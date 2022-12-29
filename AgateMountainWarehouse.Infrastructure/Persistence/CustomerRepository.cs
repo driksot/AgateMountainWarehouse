@@ -15,18 +15,20 @@ public class CustomerRepository : ICustomerRepository
         _context = context;
     }
 
+    public async Task ArchiveCustomer(Guid customerId)
+    {
+        var customer = await _context.Customers.FindAsync(customerId);
+
+        customer.IsArchived = true;
+
+        await _context.SaveChangesAsync();
+    }
+
     public async Task CreateCustomer(Customer customer)
     {
         _context.Add(customer);
 
         await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteCustomer(Customer customer)
-    {
-        _context.Remove(customer);
-        await _context.SaveChangesAsync();
-
     }
 
     public async Task<Customer> GetCustomerById(Guid customerId)

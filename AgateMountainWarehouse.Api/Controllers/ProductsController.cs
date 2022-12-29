@@ -69,19 +69,6 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        var product = await _productRepository.GetProductById(id);
-        if (product is null) return NotFound(new ApiResponse(404));
-
-        await _productRepository.DeleteProduct(product);
-
-        return NoContent();
-    }
-
     [HttpPatch("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Archive(Guid id)
