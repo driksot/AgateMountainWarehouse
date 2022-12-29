@@ -9,5 +9,6 @@ public interface IInventoryRepository
     Task<Inventory> GetInventoryById(Guid inventoryId);
     Task<Inventory> GetInventoryByProductId(Guid productId);
     Task UpdateQuantityOnHand(Guid inventoryId, int adjustment);
+    Task<List<InventorySnapshot>> GetSnapshotHistory();
     Task DeleteInventory(Inventory inventory);
 }

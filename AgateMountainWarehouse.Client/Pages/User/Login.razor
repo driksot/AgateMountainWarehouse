@@ -3,7 +3,7 @@
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 
-<h3>Login</h3>
+<MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Log In".ToUpper())</MudText>
 
 @if (ShowAuthError)
 {
@@ -11,31 +11,30 @@
         <p>@Error</p>
     </div>
 }
-<EditForm Model="_userAuthentication" OnValidSubmit="ExecuteLogin" class="card card-body bg-light mt-5">
+<EditForm Model="_userAuthentication" OnValidSubmit="ExecuteLogin">
     <DataAnnotationsValidator />
+    <MudCard Class="pa-4">
+        <MudCardContent>
 
-    <div class="form-group row mb-4 mt-2">
-        <label for="email" class="col-md-2 col-form-label">Email:</label>
-        <div class="col-md-10">
-            <InputText id="email" class="form-control" @bind-Value="_userAuthentication.Email" />
+            <MudTextField @bind-Value="_userAuthentication.Email" Label="Email" Variant="Variant.Outlined" Class="mb-4" />
             <ValidationMessage For="@(() => _userAuthentication.Email)" />
-        </div>
-    </div>
 
-    <div class="form-group row mb-4">
-        <label for="password" class="col-md-2 col-form-label">Password:</label>
-        <div class="col-md-10">
-            <InputText type="password" id="password" class="form-control" @bind-Value="_userAuthentication.Password" />
+            <MudTextField @bind-Value="_userAuthentication.Password" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password" Class="mb-4" />
             <ValidationMessage For="@(() => _userAuthentication.Password)" />
-        </div>
-    </div>
 
-    <div class="row mb-2">
-        <div class="col-md-12 text-right">
-            <button type="submit" class="btn btn-success">Login</button>
-        </div>
-    </div>
+        </MudCardContent>
+        <MudCardActions Class="ms-2 pb-2 d-flex justify-end">
 
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Login"
+                       Color="Color.Primary"
+                       ButtonType="MudBlazor.ButtonType.Submit">
+                Log In
+            </MudButton>
+
+        </MudCardActions>
+    </MudCard>
+ 
 </EditForm>
 
 @code {

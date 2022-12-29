@@ -12,4 +12,5 @@ public interface IProductHttpRepository
     Task<string> UploadProductImage(MultipartFormDataContent content);
     Task UpdateProduct(ProductViewModel product);
     Task DeleteProduct(Guid id);
+    Task ArchiveProduct(Guid id);
 }

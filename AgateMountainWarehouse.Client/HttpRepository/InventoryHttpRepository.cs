@@ -2,6 +2,7 @@
 using AgateMountainWarehouse.Client.Features;
 using AgateMountainWarehouse.Client.Static;
 using AgateMountainWarehouse.Client.ViewModels;
+using AgateMountainWarehouse.Domain.Entities;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System.Text.Json;
@@ -87,8 +88,24 @@ public class InventoryHttpRepository : IInventoryHttpRepository
             throw new ApplicationException(content);
         }
 
-        var inventory = JsonSerializer.Deserialize<InventoryViewModel>(content,_options);
+        var inventory = JsonSerializer.Deserialize<InventoryViewModel>(content, _options);
         return inventory;
+    }
+
+    public async Task<SnapshotResponseViewModel> GetSnapshotHistory()
+    {
+        var url = Path.Combine(APIEndpoints._inventories, "snapshot");
+
+        var response = await _httpClient.GetAsync(url);
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        var snapshots = JsonSerializer.Deserialize<SnapshotResponseViewModel>(content, _options);
+        return snapshots;
     }
 
     public async Task UpdateQuantityOnHand(InventoryAdjustmentViewModel inventoryAdjustment)

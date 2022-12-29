@@ -1,0 +1,237 @@
+﻿@page "/orders/admin"
+
+@implements IDisposable
+
+@inject IOrderHttpRepository OrderHttpRepository
+@inject HttpInterceptorService Interceptor
+@inject NavigationManager NavigationManager
+
+<PageTitle>Sales Orders</PageTitle>
+
+<MudElement HtmlTag="section">
+
+    <MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Open Orders".ToUpper())</MudText>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<SalesOrderViewModel>>>(OpenServerReload))"
+            Dense="true" Hover="true" Striped="true" Bordered="true" @ref="_openTable">
+        <ToolBarContent>
+            <MudButton Href="generateOrder"
+                    DisableElevation
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    StartIcon="@Icons.Material.Filled.Add"
+                    IconColor="Color.Surface">Generate New Order</MudButton>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s=>OnOpenSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width: 35%" />
+            <col style="width: 20%" />
+            <col style="width: 20%" />
+            <col style="width: 15%" />
+            <col />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel T="SalesOrderViewModel">Order #</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="SalesOrderViewModel">Products</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="totalcost" T="SalesOrderViewModel">Cost</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="createddatetime" T="SalesOrderViewModel">Creation Date</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="SalesOrderViewModel">Complete Order</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="SalesOrderViewModel">View</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Order Number">@context.Id</MudTd>
+            <MudTd DataLabel="Products">@context.OrderItems.Count</MudTd>
+            <MudTd DataLabel="Cost">@context.TotalCost.ToString("c")</MudTd>
+            <MudTd DataLabel="Creation Date">@context.CreatedDateTime.ToString("MMMM dd yyyy")</MudTd>
+            <MudTd DataLabel="Mark Complete">
+                <MudIcon Icon="@Icons.Material.Filled.Check" @onclick="() => CompleteOrder(context.Id)" />
+            </MudTd>
+            <MudTd DataLabel="Preview Order">
+                <MudIcon Icon="@Icons.Material.Filled.ViewList" @onclick="() => NavigateToPreview(context.Id)" />
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
+</MudElement>
+
+<MudElement HtmlTag="section mt-2">
+
+    <MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Closed Orders".ToUpper())</MudText>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<SalesOrderViewModel>>>(ClosedServerReload))"
+            Dense="true" Hover="true" Striped="true" Bordered="true" @ref="_closedTable">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s=>OnClosedSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width: 35%" />
+            <col style="width: 20%" />
+            <col style="width: 20%" />
+            <col style="width: 15%" />
+            <col />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel T="SalesOrderViewModel">Order #</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name" T="SalesOrderViewModel">Products</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="totalcost" T="SalesOrderViewModel">Cost</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="createddatetime" T="SalesOrderViewModel">Creation Date</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="updateddatetime" T="SalesOrderViewModel">Completion Date</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="SalesOrderViewModel">View</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Order Number">@context.Id</MudTd>
+            <MudTd DataLabel="Products">@context.OrderItems.Count</MudTd>
+            <MudTd DataLabel="Cost">@context.TotalCost.ToString("c")</MudTd>
+            <MudTd DataLabel="Creation Date">@context.CreatedDateTime.ToString("MMMM dd yyyy")</MudTd>
+            <MudTd DataLabel="Completion Date">@context.UpdatedDateTime?.ToString("MMMM dd yyyy")</MudTd>
+            <MudTd DataLabel="Preview Order">
+                <MudIcon Icon="@Icons.Material.Filled.ViewList" @onclick="() => NavigateToPreview(context.Id)" />
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
+</MudElement>
+
+@code {
+    private IEnumerable<SalesOrderViewModel> _allOrders = new List<SalesOrderViewModel>();
+    private List<SalesOrderViewModel> _filteredOrders = new List<SalesOrderViewModel>();
+    private MudTable<SalesOrderViewModel> _openTable = new MudTable<SalesOrderViewModel>();
+    private MudTable<SalesOrderViewModel> _closedTable = new MudTable<SalesOrderViewModel>();
+    private PagingParameters _openPagingParameters = new PagingParameters();
+    private PagingParameters _closedPagingParameters = new PagingParameters();
+    private string _searchString = string.Empty;
+
+    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+
+    private async Task<TableData<SalesOrderViewModel>> ClosedServerReload(TableState state)
+    {
+        _filteredOrders.Clear();
+
+        _closedPagingParameters.SetPrivatePageSize("PageSize", state.PageSize);
+        _closedPagingParameters.PageNumber = state.Page + 1;
+
+        switch (state.SortLabel)
+        {
+            case "totalcost":
+                _closedPagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "totalcost desc"
+                    : "totalcost";
+                break;
+            case "createddatetime":
+                _closedPagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "createddatetime desc"
+                    : "createddatetime";
+                break;
+            case "updateddatetime":
+                _closedPagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "updateddatetime desc"
+                    : "updateddatetime";
+                break;
+        }
+
+        var pagingResponse = await OrderHttpRepository.GetOrders(_closedPagingParameters);
+        _allOrders = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+
+        foreach (var order in _allOrders)
+        {
+            if (order.IsPaid)
+            {
+                _filteredOrders.Add(order);
+            }
+        }
+
+        return new TableData<SalesOrderViewModel>() { TotalItems = MetaData.TotalCount, Items = _filteredOrders };
+    }
+
+    private async Task<TableData<SalesOrderViewModel>> OpenServerReload(TableState state)
+    {
+        _filteredOrders.Clear();
+
+        _openPagingParameters.SetPrivatePageSize("PageSize", state.PageSize);
+        _openPagingParameters.PageNumber = state.Page + 1;
+
+        switch (state.SortLabel)
+        {
+            case "totalcost":
+                _openPagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "totalcost desc"
+                    : "totalcost";
+                break;
+            case "createddatetime":
+                _openPagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "createddatetime desc"
+                    : "createddatetime";
+                break;
+        }
+
+        var pagingResponse = await OrderHttpRepository.GetOrders(_openPagingParameters);
+        _allOrders = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+
+        foreach (var order in _allOrders)
+        {
+            if (!order.IsPaid)
+            {
+                _filteredOrders.Add(order);
+            }
+        }
+
+        return new TableData<SalesOrderViewModel>() { TotalItems = MetaData.TotalCount, Items = _filteredOrders };
+    }
+
+    private void OnOpenSearch(string searchText)
+    {
+        _openPagingParameters.SearchTerm = searchText;
+        _openTable.ReloadServerData();
+    }
+
+    private void OnClosedSearch(string searchText)
+    {
+        _closedPagingParameters.SearchTerm = searchText;
+        _closedTable.ReloadServerData();
+    }
+
+    private void NavigateToPreview(Guid id)
+    {
+        var url = Path.Combine("/order/preview", id.ToString());
+        NavigationManager.NavigateTo(url);
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
+    }
+
+    private async Task CompleteOrder(Guid id)
+    {
+        await OrderHttpRepository.MarkFulfilled(id);
+        _openPagingParameters.PageNumber = 1;
+        await _openTable.ReloadServerData();
+        await _closedTable.ReloadServerData();
+    }
+}

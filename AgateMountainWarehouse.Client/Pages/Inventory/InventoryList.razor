@@ -1,87 +1,165 @@
 ﻿@page "/inventories"
 
+@implements IDisposable
+
 @inject IInventoryHttpRepository InventoryHttpRepository
 @inject IProductHttpRepository ProductHttpRepository
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject HttpInterceptorService Interceptor
+@inject ISnackbar Snackbar
 
-<div class="row">
-    <div class="col-md-2">
-        <button 
-            type="button"
-            class="btn btn-primary"
-            @onclick="GetInventories">
-            Reset
-        </button>
-    </div>
-    <div class="col-md-10">
-        <Search Type="@Type" OnSearchChanged="SearchChanged" />
-    </div>
-</div>
-<div class="row">
-    <div class="col mt-2">
-        <InventoryTable 
-            InventoryList="Inventories" 
-            OnSortChanged="SortChanged"
-            OnAdjustQuantity="AdjustQuantity"/>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
-    </div>
-</div>
+<MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Inventory Management".ToUpper())</MudText>
 
-@code {
+<MudTable ServerData="@(new Func<TableState, Task<TableData<InventoryViewModel>>>(ServerReload))"
+          Dense="true" Hover="true" Striped="true" Bordered="true" CanCancelEdit="true" 
+          CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Quantity updated"))" 
+          RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted"
+          @ref="_table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width: 5%" />
+        <col style="width: 75%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="InventoryViewModel">Image</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name" T="InventoryViewModel">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="price" T="InventoryViewModel">Price</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="InventoryViewModel">Quantity on Hand</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Image">
+            <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.Product?.ImageUrl" />
+        </MudTd>
+        <MudTd DataLabel="Name">@context.Product?.Name</MudTd>
+        <MudTd DataLabel="Price">@context.Product?.Price.ToString("c")</MudTd>
+        <MudTd DataLabel="QuantityOnHand">@context.QuantityOnHand</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Image">
+            <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.Product?.ImageUrl" />
+        </MudTd>
+        <MudTd DataLabel="Name">@context.Product?.Name</MudTd>
+        <MudTd DataLabel="Price">@context.Product?.Price.ToString("c")</MudTd>
+        <MudTd DataLabel="QuantityOnHand">
+            <MudNumericField @bind-Value="@context.QuantityOnHand" Required Min="0" />
+        </MudTd>
+    </RowEditingTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+    </EditButtonContent>
+</MudTable>
+
+    @code {
     public List<InventoryViewModel> Inventories { get; set; } = new List<InventoryViewModel>();
+    private IEnumerable<InventoryViewModel> _inventories = new List<InventoryViewModel>();
+    private MudTable<InventoryViewModel> _table = new MudTable<InventoryViewModel>();
+    private PagingParameters _pagingParameters = new PagingParameters();
+    private InventoryViewModel _elementBeforeEdit = new();
+    private List<string> _editEvents = new();
+    private string _searchString = string.Empty;
+
     public PagingMetaData MetaData { get; set; } = new PagingMetaData();
     public string Type { get; set; } = string.Empty;
 
-    private PagingParameters _pagingParameters = new PagingParameters();
-
-    protected override async Task OnInitializedAsync()
+    private async Task<TableData<InventoryViewModel>> ServerReload(TableState state)
     {
-        Type = "product inventory";
-        await GetInventories();
-    }
+        _pagingParameters.SetPrivatePageSize("PageSize", state.PageSize);
+        _pagingParameters.PageNumber = state.Page + 1;
 
-    private async Task SelectedPage(int page) 
-    {
-        _pagingParameters.PageNumber = page;
-        await GetInventories();
-    }
+        switch (state.SortLabel)
+        {
+            case "name":
+                _pagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "name desc"
+                    : "name";
+                break;
+            case "price":
+                _pagingParameters.OrderBy = state.SortDirection == SortDirection.Descending
+                    ? "price desc"
+                    : "price";
+                break;
+        }
 
-    private async Task SearchChanged(string searchTerm) 
-    {
-        _pagingParameters.PageNumber = 1;
-        _pagingParameters.SearchTerm = searchTerm;
-        await GetInventories();
-    }
-
-    private async Task SortChanged(string orderBy) 
-    {
-        _pagingParameters.OrderBy = orderBy;
-        await GetInventories();
-    }
-
-    private async Task AdjustQuantity(InventoryAdjustmentViewModel inventoryAdjustment) 
-    {
-        await InventoryHttpRepository.UpdateQuantityOnHand(inventoryAdjustment);
-        await GetInventories();
-
-        await JSRuntime.InvokeVoidAsync("alert", "Inventory quatity has been updated");
-    }
-
-    private async Task GetInventories() 
-    {
         var pagingResponse = await InventoryHttpRepository.GetInventories(_pagingParameters);
-        Inventories = pagingResponse.Items;
+        _inventories = pagingResponse.Items;
         MetaData = pagingResponse.MetaData;
 
-        foreach (var inventory in Inventories)
+        foreach (var inventory in _inventories)
         {
             var product = await ProductHttpRepository.GetProductById(inventory.ProductId.ToString());
             inventory.Product = product;
         }
+
+        return new TableData<InventoryViewModel>() { TotalItems = MetaData.TotalCount, Items = _inventories };
+    }
+
+    private void OnSearch(string searchText)
+    {
+        _pagingParameters.SearchTerm = searchText;
+        _table.ReloadServerData();
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
+    }
+
+    private void ClearEventLog()
+    {
+        _editEvents.Clear();
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        _editEvents.Add(message);
+        StateHasChanged();
+    }
+
+    private void BackupItem(object inventory)
+    {
+        _elementBeforeEdit = new()
+            {
+                QuantityOnHand = ((InventoryViewModel)inventory).QuantityOnHand
+            };
+        AddEditionEvent($"RowEditPreview event: made a backup of Element {((InventoryViewModel)inventory).QuantityOnHand}");
+    }
+
+    private void ItemHasBeenCommitted(object inventory)
+    {
+        AddEditionEvent($"RowEditCommit event: Changes to Element {((InventoryViewModel)inventory).QuantityOnHand} committed");
+
+        AdjustQuantity(
+            new InventoryAdjustmentViewModel
+            {
+                InventoryId = ((InventoryViewModel)inventory).Id,
+                Adjustment = ((InventoryViewModel)inventory).QuantityOnHand
+            }
+        );
+    }
+
+    private void ResetItemToOriginalValues(object inventory)
+    {
+        ((InventoryViewModel)inventory).QuantityOnHand = _elementBeforeEdit.QuantityOnHand;
+        AddEditionEvent($"RowEditCancel event: Editing of Element {((InventoryViewModel)inventory).QuantityOnHand} cancelled");
+    }
+
+    private void AdjustQuantity(InventoryAdjustmentViewModel inventoryAdjustment) 
+    {
+        InventoryHttpRepository.UpdateQuantityOnHand(inventoryAdjustment);
     }
 }

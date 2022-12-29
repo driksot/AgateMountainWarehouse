@@ -13,6 +13,7 @@ public class ProductViewModel
     [Range(0, double.MaxValue, ErrorMessage = "Value for the price can't be lower than 0")]
     public double Price { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    public bool IsArchived { get; set; }
     public DateTime CreatedDateTime { get; set; }
     public DateTime? UpdatedDateTime { get; set; }
 }

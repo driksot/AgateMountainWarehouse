@@ -6,59 +6,74 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Generate Order</PageTitle>
-
-<div class="d-flex justify-content-between">
-    <h2>Generate Sales Order</h2>
-
-    <button type="button" class="btn btn-primary ms-2" @onclick="NavigateBack">Back</button>
-</div>
+<MudElement HtmlTag="section" Class="d-flex justify-space-between align-center">
+<MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Generate Order".ToUpper())</MudText>
+    <MudButton Variant="Variant.Filled"
+            StartIcon="@Icons.Material.Filled.ArrowBack"
+            Color="Color.Secondary"
+            Class="ms-2"
+            Href="/orders">
+        Back
+    </MudButton>
+</MudElement>
 
 @if (_orderItems.Count > 0)
 {
-    <EditForm Model="_selectedOrderItem" OnValidSubmit="AddLineItem" class="card card-body bg-light my-4">
+    <EditForm Model="_selectedOrderItem" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
-
-        <div class="row mb-2">
-            <div class="col-md-10">
-                <label for="product" class="col-form-label">Product:</label>
-                <div class="">
-                    <select id="product" @bind="_selectedOrderItem.Id" class="form-control">
-                        <option value="" disabled selected hidden>Please select a Product</option>
-                        @foreach (var item in _orderItems)
-                        {
-                            <option value="@item.Id" key>@item.Product.Name</option>
-                        }
-                    </select>
-                    <ValidationMessage For="@(() => _selectedOrderItem.Product)" />
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <label for="quantity" class="col-form-label">Quantity:</label>
-                <div class="">
-                    <InputNumber id="quantity" @bind-Value="@_selectedOrderItem.Quantity" class="form-control" />
-                    <ValidationMessage For="@(() => _selectedOrderItem.Quantity)" />
-                </div>
-            </div>
-
-        </div>
-
-        <br />
-
-        <div>
-            <div class="float-end">
-                <button type="submit" class="btn btn-success">Add Line Item</button>
-                <button type="button" class="btn btn-primary ms-2" @onclick="FinalizeOrder">Finalize Order</button>
-            </div>
-        </div>
-
+        <MudCard Class="pa-4">
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudSelect @bind-Value="_selectedCustomer" Label="Customer">
+                            <MudSelectItem Value="_selectedCustomer">Select a Customer</MudSelectItem>
+                            @foreach (var customer in _customers)
+                            {
+                                <MudSelectItem Value="@customer">@($"{customer.FirstName} {customer.LastName}")</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <ValidationMessage For="@(() => _selectedCustomer)" />
+                    </MudItem>
+                    <MudItem xs="10">
+                        <MudSelect @bind-Value="_selectedOrderItem" Label="Product">
+                            <MudSelectItem Value="_selectedOrderItem">Select a Product</MudSelectItem>
+                            @foreach (var item in _orderItems)
+                            {
+                                <MudSelectItem Value="@item">@item.Product.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <ValidationMessage For="@(() => _selectedOrderItem.Product)" />
+                    </MudItem>
+                    <MudItem xs="2">
+                        <MudNumericField @bind-Value="@_selectedOrderItem.Quantity" Label="Quantity" Variant="Variant.Text" Min="0" />
+                        <ValidationMessage For="@(() => _selectedOrderItem.Quantity)" />
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+            <MudCardActions Class="ms-2 pb-2 d-flex justify-end">
+                <MudButton Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.Save"
+                        Color="Color.Tertiary"
+                        ButtonType="MudBlazor.ButtonType.Submit">
+                    Add Line Item
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.AddToQueue"
+                        Color="Color.Primary"
+                        Class="ms-2"
+                        @onclick="FinalizeOrder">
+                    Finalize Order
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
     </EditForm>
 }
 else
 {
     <span>Loading form...</span>
 }
+
+<br />
 
 <OrderItemTable ItemList="_selectedOrderItems" />
 
@@ -67,8 +82,10 @@ else
 @code {
     private SalesOrderViewModel _order = new SalesOrderViewModel();
     private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
+    private List<CustomerViewModel> _customers = new List<CustomerViewModel>();
     private List<SalesOrderItemViewModel> _selectedOrderItems = new List<SalesOrderItemViewModel>();
     private SalesOrderItemViewModel _selectedOrderItem = new SalesOrderItemViewModel();
+    private CustomerViewModel _selectedCustomer = new CustomerViewModel();
     private InventoryViewModel _selectedInventory = new InventoryViewModel();
     private SuccessNotification _notification = new SuccessNotification();
     private string _navUrl = "/orders";
@@ -82,6 +99,8 @@ else
         _pagingParameters.SetPrivatePageSize("PageSize", 50);
 
         await GetProducts();
+
+        _selectedOrderItem = _orderItems[0];
     }
 
     private async Task GetProducts()
@@ -102,7 +121,7 @@ else
         }
     }
 
-    private async Task AddLineItem() 
+    private async Task HandleValidSubmit()
     {
         var product = await ProductHttpRepository.GetProductById(_selectedOrderItem.Id.ToString());
 
@@ -134,7 +153,7 @@ else
         if (!itemExists) 
             _selectedOrderItems.Add(_selectedOrderItem);
 
-        _selectedOrderItem = new SalesOrderItemViewModel();
+        _selectedOrderItem = _orderItems[0];
     }
 
     private async Task FinalizeOrder() 
@@ -148,6 +167,7 @@ else
 
         _order.OrderItems = _selectedOrderItems;
         _order.TotalCost = totalCost;
+        _order.Customer = _selectedCustomer;
 
         await OrderHttpRepository.GenerateOrder(_order);
         _notification.Show();

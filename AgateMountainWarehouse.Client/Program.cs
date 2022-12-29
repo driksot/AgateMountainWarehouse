@@ -6,6 +6,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using Tewr.Blazor.FileReader;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
@@ -13,6 +14,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 {
     builder.RootComponents.Add<App>("#app");
     builder.RootComponents.Add<HeadOutlet>("head::after");
+
+    builder.Services.AddMudServices();
 
     builder.Services.AddScoped(sp => new HttpClient 
     { 
@@ -23,6 +26,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
     builder.Services.AddScoped<IProductHttpRepository, ProductHttpRepository>();
     builder.Services.AddScoped<IInventoryHttpRepository, InventoryHttpRepository>();
     builder.Services.AddScoped<IOrderHttpRepository, OrderHttpRepository>();
+    builder.Services.AddScoped<ICustomerHttpRepository, CustomerHttpRepository>();
     builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
     builder.Services.AddBlazoredLocalStorage();

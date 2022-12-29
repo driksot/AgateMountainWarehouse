@@ -6,7 +6,7 @@ namespace AgateMountainWarehouse.Infrastructure.Configurations.Entities;
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
-    private const string BaseUrl = "https://localhost:7252/StaticFiles/";
+    private const string BaseUrl = $"StaticFiles";
 
     public void Configure(EntityTypeBuilder<Product> builder)
     {
@@ -88,6 +88,86 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
                 Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
                 Price = 8,
                 ImageUrl = $"{BaseUrl}/Images/gold-wire.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("57aea388-8f33-4975-aea7-a587855d87ee"),
+                Name = "Agate",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 38,
+                ImageUrl = $"{BaseUrl}/Images/agate.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("6fc19f3c-5426-4dd4-a1e2-aaebc14ce18a"),
+                Name = "Carnelian",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 18,
+                ImageUrl = $"{BaseUrl}/Images/carnelian.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("6b001338-1a4f-496c-8d26-dee9e111c24d"),
+                Name = "Malachite",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 23,
+                ImageUrl = $"{BaseUrl}/Images/malachite.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("ba12294f-779c-425e-a2d0-9a6a69e8c009"),
+                Name = "26 Gauge Silver Wire",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 8,
+                ImageUrl = $"{BaseUrl}/Images/silver-wire.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("4d1e2f73-94db-4559-b47b-5d7619e39dba"),
+                Name = "24 Gauge Silver Wire",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 7,
+                ImageUrl = $"{BaseUrl}/Images/silver-wire.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("4f8e0392-db1c-4768-8a4f-c54b018f2f81"),
+                Name = "26 Gauge Copper Wire",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 7,
+                ImageUrl = $"{BaseUrl}/Images/copper-wire.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("bc7e516c-5e5b-4949-8384-414cac54e563"),
+                Name = "24 Gauge Copper Wire",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 6,
+                ImageUrl = $"{BaseUrl}/Images/copper-wire.jpg",
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now
+            },
+            new Product
+            {
+                Id = new Guid("9465fec5-3ee4-4d25-ba84-69f3ec21336a"),
+                Name = "Sapphire",
+                Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                Price = 25,
+                ImageUrl = $"{BaseUrl}/Images/sapphire.jpg",
                 CreatedDateTime = DateTime.Now,
                 UpdatedDateTime = DateTime.Now
             });

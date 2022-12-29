@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgateMountainWarehouse.Infrastructure.Migrations
 {
     [DbContext(typeof(WarehouseDbContext))]
-    [Migration("20221213031728_AddCustomersAddressesAndInventorySnapshots")]
-    partial class AddCustomersAddressesAndInventorySnapshots
+    [Migration("20221226025137_AddIsArchivedToProductAndCustomer")]
+    partial class AddIsArchivedToProductAndCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,9 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -129,59 +132,115 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f3ec15b3-d2d7-45a4-b0ff-ab16adc3e035"),
+                            Id = new Guid("8917aa6d-2655-4108-a520-b0da674bc44c"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("ffbc3199-8546-4699-a532-c10a32c564cc"),
                             QuantityOnHand = 4
                         },
                         new
                         {
-                            Id = new Guid("c1837bdd-5195-4f47-a1e8-2ba38b1adb3c"),
+                            Id = new Guid("999d4d12-8d9d-4315-a389-16b210e28dbd"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("b8552865-4078-4e4b-8d20-ff0d14d87d8d"),
                             QuantityOnHand = 7
                         },
                         new
                         {
-                            Id = new Guid("a9569f7a-a969-409c-b644-fd7eb9df532d"),
+                            Id = new Guid("297c9f85-d80c-40e5-810f-38ace3e79155"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("6f6977f5-a099-4add-94f3-1fdcb5e06b92"),
                             QuantityOnHand = 3
                         },
                         new
                         {
-                            Id = new Guid("1e0a9157-9f55-4d6d-b7e8-20a1cce917cc"),
+                            Id = new Guid("afcd2641-40ae-4e23-afbc-0266e68ee293"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("4ef32bc9-536f-4231-8934-f3ce9d48d111"),
                             QuantityOnHand = 4
                         },
                         new
                         {
-                            Id = new Guid("88a8f2be-00de-4c21-b0ae-b5e4e9fa249e"),
+                            Id = new Guid("b3f5dc4d-0a08-44c4-8248-88e0f984662f"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("9af4201d-22d7-4579-bc40-341f345cb747"),
                             QuantityOnHand = 12
                         },
                         new
                         {
-                            Id = new Guid("03d95ebd-a046-4649-b886-c22b8aa5714a"),
+                            Id = new Guid("b71b18b6-cd89-4ab8-9bf1-8aa662ae36a1"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("1c5ab034-4ba0-4fb5-9f07-13b06d8f155b"),
                             QuantityOnHand = 8
                         },
                         new
                         {
-                            Id = new Guid("41e6def8-4eb1-4be8-a2b6-d2e9f11a19c3"),
+                            Id = new Guid("167671fc-f78d-43cf-ba73-cdee13baf1cd"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("7aad8902-45d5-4185-a2e6-cf466abbbb84"),
                             QuantityOnHand = 11
                         },
                         new
                         {
-                            Id = new Guid("1a8f4ee5-e1e9-4666-9309-121594c3d69e"),
+                            Id = new Guid("2b599210-d7ed-44e6-aa8f-8a27f0d9d057"),
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ProductId = new Guid("ae5e0036-8551-4dab-9e41-674d27b4a8b2"),
                             QuantityOnHand = 9
+                        },
+                        new
+                        {
+                            Id = new Guid("8601d89f-fcb0-4575-9814-ec813127d1ce"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("57aea388-8f33-4975-aea7-a587855d87ee"),
+                            QuantityOnHand = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("3b362269-0518-40aa-b540-cc66a2c89ba9"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("6fc19f3c-5426-4dd4-a1e2-aaebc14ce18a"),
+                            QuantityOnHand = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("845e18ef-bcba-4dd5-af16-ab50a6ef93b6"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("6b001338-1a4f-496c-8d26-dee9e111c24d"),
+                            QuantityOnHand = 5
+                        },
+                        new
+                        {
+                            Id = new Guid("fe0bf302-19b3-46f0-95b5-1c5f32734071"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("ba12294f-779c-425e-a2d0-9a6a69e8c009"),
+                            QuantityOnHand = 9
+                        },
+                        new
+                        {
+                            Id = new Guid("cb7a6bf2-c1e1-44e5-8b0a-c6b4723f32ce"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("4d1e2f73-94db-4559-b47b-5d7619e39dba"),
+                            QuantityOnHand = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("cd659b08-d7ae-438e-935b-729bdef5c54f"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("4f8e0392-db1c-4768-8a4f-c54b018f2f81"),
+                            QuantityOnHand = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("66f04724-681b-4086-8650-2359bb7357e7"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("bc7e516c-5e5b-4949-8384-414cac54e563"),
+                            QuantityOnHand = 7
+                        },
+                        new
+                        {
+                            Id = new Guid("bb1d4d10-153a-47c5-9751-9413f4a3f7fc"),
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProductId = new Guid("9465fec5-3ee4-4d25-ba84-69f3ec21336a"),
+                            QuantityOnHand = 5
                         });
                 });
 
@@ -194,7 +253,7 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("InventoryId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SnapshotQuantity")
@@ -208,7 +267,7 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InventoryId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("InventorySnapshots");
                 });
@@ -230,6 +289,9 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -248,82 +310,178 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("ffbc3199-8546-4699-a532-c10a32c564cc"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9708),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7970),
                             Description = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/labradorite.png",
+                            ImageUrl = "StaticFiles/Images/labradorite.png",
+                            IsArchived = false,
                             Name = "Labradorite",
                             Price = 35.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9718)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7977)
                         },
                         new
                         {
                             Id = new Guid("b8552865-4078-4e4b-8d20-ff0d14d87d8d"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9723),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7982),
                             Description = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/turquoise.png",
+                            ImageUrl = "StaticFiles/Images/turquoise.png",
+                            IsArchived = false,
                             Name = "Turquoise",
                             Price = 20.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9724)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7983)
                         },
                         new
                         {
                             Id = new Guid("6f6977f5-a099-4add-94f3-1fdcb5e06b92"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9726),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7985),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/star-garnet.jpg",
+                            ImageUrl = "StaticFiles/Images/star-garnet.jpg",
+                            IsArchived = false,
                             Name = "Star Garnet",
                             Price = 25.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9727)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7985)
                         },
                         new
                         {
                             Id = new Guid("4ef32bc9-536f-4231-8934-f3ce9d48d111"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9729),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7987),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/jasper.jpg",
+                            ImageUrl = "StaticFiles/Images/jasper.jpg",
+                            IsArchived = false,
                             Name = "Jasper",
                             Price = 20.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9730)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7988)
                         },
                         new
                         {
                             Id = new Guid("9af4201d-22d7-4579-bc40-341f345cb747"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9732),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7989),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/fire-opal.jpg",
+                            ImageUrl = "StaticFiles/Images/fire-opal.jpg",
+                            IsArchived = false,
                             Name = "Fire Opal",
                             Price = 18.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9733)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7990)
                         },
                         new
                         {
                             Id = new Guid("1c5ab034-4ba0-4fb5-9f07-13b06d8f155b"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9734),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7991),
                             Description = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/amethyst.jpg",
+                            ImageUrl = "StaticFiles/Images/amethyst.jpg",
+                            IsArchived = false,
                             Name = "Amethyst",
                             Price = 22.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9735)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7992)
                         },
                         new
                         {
                             Id = new Guid("7aad8902-45d5-4185-a2e6-cf466abbbb84"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9737),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7993),
                             Description = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/gold-wire.jpg",
+                            ImageUrl = "StaticFiles/Images/gold-wire.jpg",
+                            IsArchived = false,
                             Name = "26 Gauge Gold Wire",
                             Price = 9.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9738)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7994)
                         },
                         new
                         {
                             Id = new Guid("ae5e0036-8551-4dab-9e41-674d27b4a8b2"),
-                            CreatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9739),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7996),
                             Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-                            ImageUrl = "https://localhost:7252/StaticFiles//Images/gold-wire.jpg",
+                            ImageUrl = "StaticFiles/Images/gold-wire.jpg",
+                            IsArchived = false,
                             Name = "24 Gauge Gold Wire",
                             Price = 8.0,
-                            UpdatedDateTime = new DateTime(2022, 12, 12, 20, 17, 28, 537, DateTimeKind.Local).AddTicks(9740)
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7996)
+                        },
+                        new
+                        {
+                            Id = new Guid("57aea388-8f33-4975-aea7-a587855d87ee"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7998),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/agate.jpg",
+                            IsArchived = false,
+                            Name = "Agate",
+                            Price = 38.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(7998)
+                        },
+                        new
+                        {
+                            Id = new Guid("6fc19f3c-5426-4dd4-a1e2-aaebc14ce18a"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8000),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/carnelian.jpg",
+                            IsArchived = false,
+                            Name = "Carnelian",
+                            Price = 18.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8000)
+                        },
+                        new
+                        {
+                            Id = new Guid("6b001338-1a4f-496c-8d26-dee9e111c24d"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8002),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/malachite.jpg",
+                            IsArchived = false,
+                            Name = "Malachite",
+                            Price = 23.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8002)
+                        },
+                        new
+                        {
+                            Id = new Guid("ba12294f-779c-425e-a2d0-9a6a69e8c009"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8004),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/silver-wire.jpg",
+                            IsArchived = false,
+                            Name = "26 Gauge Silver Wire",
+                            Price = 8.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8005)
+                        },
+                        new
+                        {
+                            Id = new Guid("4d1e2f73-94db-4559-b47b-5d7619e39dba"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8006),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/silver-wire.jpg",
+                            IsArchived = false,
+                            Name = "24 Gauge Silver Wire",
+                            Price = 7.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8007)
+                        },
+                        new
+                        {
+                            Id = new Guid("4f8e0392-db1c-4768-8a4f-c54b018f2f81"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8009),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/copper-wire.jpg",
+                            IsArchived = false,
+                            Name = "26 Gauge Copper Wire",
+                            Price = 7.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8009)
+                        },
+                        new
+                        {
+                            Id = new Guid("bc7e516c-5e5b-4949-8384-414cac54e563"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8011),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/copper-wire.jpg",
+                            IsArchived = false,
+                            Name = "24 Gauge Copper Wire",
+                            Price = 6.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8011)
+                        },
+                        new
+                        {
+                            Id = new Guid("9465fec5-3ee4-4d25-ba84-69f3ec21336a"),
+                            CreatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8013),
+                            Description = "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+                            ImageUrl = "StaticFiles/Images/sapphire.jpg",
+                            IsArchived = false,
+                            Name = "Sapphire",
+                            Price = 25.0,
+                            UpdatedDateTime = new DateTime(2022, 12, 25, 19, 51, 37, 281, DateTimeKind.Local).AddTicks(8013)
                         });
                 });
 
@@ -336,6 +494,9 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
@@ -346,6 +507,8 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("SalesOrders");
                 });
@@ -475,15 +638,15 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "37986ac3-d513-46e0-8ff6-fda7ec2f0faf",
-                            ConcurrencyStamp = "588defae-5d27-496d-b152-b133175cad1e",
+                            Id = "8d50a1c4-8dd9-48cf-aff0-e3b326204da0",
+                            ConcurrencyStamp = "888cd8fa-62ea-4b70-b4b8-19aa2f67bb9a",
                             Name = "Empolyee",
                             NormalizedName = "EMPLOYEE"
                         },
                         new
                         {
-                            Id = "baa877c2-849b-462d-964d-354968f1918c",
-                            ConcurrencyStamp = "419d69fa-0259-4173-9085-ab687db514c8",
+                            Id = "544b6752-03ba-41e6-a446-c7036157a0c4",
+                            ConcurrencyStamp = "d8403aef-7ece-4da1-ba4c-e0b2d33d7eef",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -619,13 +782,22 @@ namespace AgateMountainWarehouse.Infrastructure.Migrations
 
             modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.InventorySnapshot", b =>
                 {
-                    b.HasOne("AgateMountainWarehouse.Domain.Entities.Inventory", "Inventory")
+                    b.HasOne("AgateMountainWarehouse.Domain.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Inventory");
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.SalesOrder", b =>
+                {
+                    b.HasOne("AgateMountainWarehouse.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("AgateMountainWarehouse.Domain.Entities.SalesOrderItem", b =>

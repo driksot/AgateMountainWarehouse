@@ -1,11 +1,20 @@
 ﻿@inject IProductHttpRepository ProductHttpRepository
 
-<InputFile OnChange="@HandleSelected" multiple />
+<InputFile id="uploadPhoto" OnChange="@HandleSelected" hidden multiple />
 
-@if (ImgUrl != null)
+<MudButton HtmlTag="label"
+           Variant="Variant.Filled"
+           Color="Color.Primary"
+           StartIcon="@Icons.Filled.CloudUpload"
+           Class="mb-4"
+           for="uploadPhoto">
+    Upload Photo
+</MudButton>
+
+@if (ImgUrl is not null)
 {
     <div>
-        <img src="@ImgUrl" style="width:300px" />
+        <img src="@ImgUrl" style="width:100%;" />
     </div>
 }
 

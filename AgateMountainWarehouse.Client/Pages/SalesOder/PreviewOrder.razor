@@ -1,93 +1,71 @@
-﻿@page "/orderPreview/{id}"
+﻿@page "/order/preview/{id}"
 
 @inject IOrderHttpRepository OrderHttpRepository
-@inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
 
-<div class="float-end">
-    <button type="button" class="btn btn-success" @onclick="PrintOrder">Print Order</button>
-    <button type="button" class="btn btn-primary ms-2" @onclick="NavigateBack">Back</button>
-</div>
+<MudElement HtmlTag="section" Class="d-flex justify-end mt-2 mb-5">
 
-@if (_order is not null) 
-{
-    <br />
-    <br />
-    <hr />
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Secondary"
+               Class="ms-2"
+               Href="/orders">
+        Back
+    </MudButton>
 
-    <section id="print-pdf">
+</MudElement>
 
-        <div>
-            <h5>1234 Agate Mountain Dr.</h5>
-            <h5>Phoenix, AZ 85004</h5>
-            <h5>USA</h5>
-        </div>
+<MudCard>
+    <MudCardContent Class="pa-6">
+        <MudGrid>
 
-        <hr />
+            <MudItem xs="12">
+                <MudText 
+                    Typo="Typo.h5" 
+                    Class="card-title fw-bold mb-4" 
+                    Color="Color.Primary">@($"Invoice #{_order.Id}")</MudText>
+            </MudItem>
 
-        <div class="sales-order-list">
+            <AddressLine Customer="_customer" />
 
-            <h5>Sales Order #: @_order.Id</h5>
-            <h5>Payment Status: @_paymentStatus</h5>
+            <OrderInfoLine SalesOrder="_order" />
 
-            <br />
+            <OrderSummaryTable ItemList="_orderItems" GrandTotal="_grandTotal" />
 
-            <OrderItemTable ItemList="_orderItems" />
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
 
-            <table cellpadding="5" border="1" class="table table-striped table-bordered table-hover">
-                <thead class="bg-dark bg-gradient text-light">
-                    <tr>
-                        <th colspan="3" class="text-center" style="width:78%;"></th>
-                        <th scope="col" class="text-center" style="width:22%;">Grand Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="3" class="align-middle text-center">Balance due upon receipt:</td>
-                        <td scope="col" class="align-middle text-center">@_grandTotal.ToString("c")</td>
-                    </tr>
-                </tbody>
-            </table>
+<br />
 
-        </div>
+<MudElement HtmlTag="section" Class="d-flex justify-center">
 
-    </section>
-}
-else
-{
-    <span>Loading order...</span>
-}
+    <MudButton DisableElevation
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.Print"
+            IconColor="Color.Surface">
+        Print Invoice
+    </MudButton>
+
+</MudElement>
 
 @code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private CustomerViewModel _customer = new CustomerViewModel();
     private SalesOrderViewModel _order = new SalesOrderViewModel();
     private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
     private double _grandTotal;
-    private string _paymentStatus = "Not Paid";
-
-    [Parameter]
-    public string Id { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _order = await OrderHttpRepository.GetOrderById(Id);
-
-        if (_order.IsPaid)
-            _paymentStatus = "Paid";
 
         foreach (var item in _order.OrderItems)
         {
             _orderItems.Add(item);
             _grandTotal += item.Quantity * item.Product.Price;
         }
-    }
-
-    private void NavigateBack() 
-    {
-        NavigationManager.NavigateTo("/orders");
-    }
-
-    private async Task PrintOrder() 
-    {
-        await JSRuntime.InvokeVoidAsync("Print");
     }
 }
