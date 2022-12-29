@@ -15,6 +15,15 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
+    public async Task ArchiveProduct(Guid productId)
+    {
+        var product = await _context.Products.FindAsync(productId);
+
+        product.IsArchived = true;
+
+        await _context.SaveChangesAsync();
+    }
+
     public async Task CreateProduct(Product product)
     {
         _context.Add(product);

@@ -6,7 +6,7 @@ namespace AgateMountainWarehouse.Infrastructure.Configurations.Entities;
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
-    private const string BaseUrl = $"https://localhost:7252/StaticFiles/";
+    private const string BaseUrl = $"StaticFiles";
 
     public void Configure(EntityTypeBuilder<Product> builder)
     {

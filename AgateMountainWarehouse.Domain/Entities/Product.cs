@@ -8,4 +8,5 @@ public class Product : AuditableEntity
     public string Description { get; set; } = string.Empty;
     public double Price { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    public bool IsArchived { get; set; } = false;
 }

@@ -81,4 +81,12 @@ public class ProductsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPatch("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Archive(Guid id)
+    {
+        await _productRepository.ArchiveProduct(id);
+        return NoContent();
+    }
 }

@@ -10,4 +10,5 @@ public interface IProductRepository
     Task CreateProduct(Product product);
     Task UpdateProduct(Product product, Product dbProduct);
     Task DeleteProduct(Product product);
+    Task ArchiveProduct(Guid productId);
 }

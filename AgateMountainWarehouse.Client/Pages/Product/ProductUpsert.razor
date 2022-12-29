@@ -1,5 +1,5 @@
-﻿@page "/createProduct"
-@page "/updateProduct/{id}"
+﻿@page "/products/new"
+@page "/products/update/{id}"
 
 @implements IDisposable
 
@@ -38,7 +38,7 @@
         <MudItem xs="2">
             <MudCard>
                 <MudCardContent Class="d-flex justify-content-center" Style="flex-direction:column">
-                    <ImageUpload OnChange="AssignImageUrl" ImgUrl="@_product.ImageUrl" />
+                    <ImageUpload OnChange="AssignImageUrl" ImgUrl="@($"{APIEndpoints._serverBaseUrl}{_product.ImageUrl}")" />
                 </MudCardContent>
             </MudCard>
         </MudItem>

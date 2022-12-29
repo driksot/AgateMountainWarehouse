@@ -19,6 +19,19 @@ public class ProductHttpRepository : IProductHttpRepository
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
+    public async Task ArchiveProduct(Guid id)
+    {
+        var url = Path.Combine(APIEndpoints._products, id.ToString());
+
+        var patchResult = await _httpClient.PatchAsync(url, null);
+        var patchContent = await patchResult.Content.ReadAsStringAsync();
+
+        if (!patchResult.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(patchContent);
+        }
+    }
+
     public async Task CreateProduct(ProductViewModel product)
     {
         var content = JsonSerializer.Serialize(product);
@@ -124,7 +137,7 @@ public class ProductHttpRepository : IProductHttpRepository
 
     public async Task<string> UploadProductImage(MultipartFormDataContent content)
     {
-        var postResult = await _httpClient.PostAsync("upload", content);
+        var postResult = await _httpClient.PostAsync("api/upload", content);
         var postContent = await postResult.Content.ReadAsStringAsync();
 
         if (!postResult.IsSuccessStatusCode)
@@ -133,7 +146,7 @@ public class ProductHttpRepository : IProductHttpRepository
         }
         else
         {
-            var imgUrl = Path.Combine("https://localhost:7252/", postContent);
+            var imgUrl = postContent;
             return imgUrl;
         }
     }

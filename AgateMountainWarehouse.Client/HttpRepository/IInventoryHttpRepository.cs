@@ -9,5 +9,6 @@ public interface IInventoryHttpRepository
     Task<PagingResponse<InventoryViewModel>> GetInventories(PagingParameters pagingParameters);
     Task<InventoryViewModel> GetInventoryByProductId(string productId);
     Task UpdateQuantityOnHand(InventoryAdjustmentViewModel inventoryAdjustment);
+    Task<SnapshotResponseViewModel> GetSnapshotHistory();
     Task DeleteInventory(Guid inventoryId);
 }
