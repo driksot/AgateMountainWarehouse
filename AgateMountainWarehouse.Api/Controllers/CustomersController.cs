@@ -2,6 +2,7 @@
 using AgateMountainWarehouse.Application.Interfaces;
 using AgateMountainWarehouse.Application.RequestFeatures;
 using AgateMountainWarehouse.Domain.Entities;
+using AgateMountainWarehouse.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -67,16 +68,11 @@ public class CustomersController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpPatch("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Archive(Guid id)
     {
-        var customer = await _customerRepository.GetCustomerById(id);
-        if (customer is null) return NotFound(new ApiResponse(404));
-
-        await _customerRepository.DeleteCustomer(customer);
-
+        await _customerRepository.ArchiveCustomer(id);
         return NoContent();
     }
 }

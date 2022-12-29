@@ -9,5 +9,5 @@ public interface ICustomerRepository
     Task<Customer> GetCustomerById(Guid customerId);
     Task CreateCustomer(Customer customer);
     Task UpdateCustomer(Customer customer, Customer dbCustomer);
-    Task DeleteCustomer(Customer customer);
+    Task ArchiveCustomer(Guid customerId);
 }
