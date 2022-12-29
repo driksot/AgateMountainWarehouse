@@ -28,7 +28,7 @@ public class AuthenticationService : IAuthenticationService
         var content = JsonSerializer.Serialize(userAuthentication);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-        var authResult = await _httpClient.PostAsync("accounts/login", bodyContent);
+        var authResult = await _httpClient.PostAsync("api/accounts/login", bodyContent);
         var authContent = await authResult.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<AuthResponseViewModel>(authContent, _options);
 
@@ -59,7 +59,7 @@ public class AuthenticationService : IAuthenticationService
         var tokenDto = JsonSerializer.Serialize(new RefreshTokenViewModel { Token = token, RefreshToken = refreshToken });
         var bodyContent = new StringContent(tokenDto, Encoding.UTF8, "application/json");
 
-        var refreshResult = await _httpClient.PostAsync("token/refresh", bodyContent);
+        var refreshResult = await _httpClient.PostAsync("api/token/refresh", bodyContent);
         var refreshContent = await refreshResult.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<AuthResponseViewModel>(refreshContent, _options);
 
@@ -78,7 +78,7 @@ public class AuthenticationService : IAuthenticationService
     {
         var content = JsonSerializer.Serialize(userForRegistration);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
-        var registrationResult = await _httpClient.PostAsync("accounts/registration", bodyContent);
+        var registrationResult = await _httpClient.PostAsync("api/accounts/registration", bodyContent);
         var registrationContent = await registrationResult.Content.ReadAsStringAsync();
         if (!registrationResult.IsSuccessStatusCode)
         {

@@ -50,6 +50,16 @@ public class InventoryRepository : IInventoryRepository
         return inventory ?? new Inventory();
     }
 
+    public async Task<List<InventorySnapshot>> GetSnapshotHistory()
+    {
+        var snapshotStartTime = DateTime.Now - TimeSpan.FromHours(2);
+
+        return await _context.InventorySnapshots
+            .Include(snapshot => snapshot.Product)
+            .Where(snapshot => snapshot.SnapshotTime > snapshotStartTime)
+            .ToListAsync();
+    }
+
     public async Task UpdateQuantityOnHand(Guid inventoryId, int adjustment)
     {
         try
@@ -86,8 +96,7 @@ public class InventoryRepository : IInventoryRepository
         {
             var snapshot = new InventorySnapshot
             {
-                InventoryId = inv.Id,
-                Inventory = inv,
+                Product = inv.Product,
                 SnapshotQuantity = inv.QuantityOnHand,
                 SnapshotTime = DateTime.Now
             };

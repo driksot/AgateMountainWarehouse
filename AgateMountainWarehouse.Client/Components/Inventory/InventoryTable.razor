@@ -22,10 +22,10 @@
         </TableHeader>
         <RowTemplate>
             <td class="text-center">
-                <img src="@inventory.Product.ImageUrl" alt="product image" style="width:100px;" />
+                <img src="@inventory.Product?.ImageUrl" alt="product image" style="width:100px;" />
             </td>
             <td class="align-middle">
-                @inventory.Product.Name
+                @inventory.Product?.Name
             </td>
             <td class="align-middle">
                 <EditForm Model="inventory" class="row" OnValidSubmit="() => AdjustQuantity(inventory.Id, inventory.QuantityOnHand)">

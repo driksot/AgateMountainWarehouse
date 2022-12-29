@@ -1,0 +1,90 @@
+﻿@page "/products/new"
+@page "/products/update/{id}"
+
+@implements IDisposable
+
+@inject IProductHttpRepository ProductHttpRepository
+@inject HttpInterceptorService Interceptor
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@($"{_title} Product".ToUpper())</MudText>
+
+<EditForm Model="_product" OnValidSubmit="HandleValidSubmit">
+    <MudGrid>
+        <MudItem xs="10">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField @bind-Value="_product.Name" Label="Name" Variant="Variant.Outlined" Class="mb-4" />
+                    <MudTextField @bind-Value="_product.Description" Label="Description" Variant="Variant.Outlined" Lines="8" Class="mb-4" />
+                </MudCardContent>
+                <MudCardActions Class="ms-2 pb-2">
+                    <MudButton Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               Color="Color.Primary"
+                               ButtonType="MudBlazor.ButtonType.Submit">
+                        Save
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.ArrowBack"
+                               Color="Color.Secondary"
+                               Class="ms-2"
+                               Href="/products">
+                        Back
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="2">
+            <MudCard>
+                <MudCardContent Class="d-flex justify-content-center" Style="flex-direction:column">
+                    <ImageUpload OnChange="AssignImageUrl" ImgUrl="@($"{APIEndpoints._serverBaseUrl}{_product.ImageUrl}")" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private ProductViewModel _product = new ProductViewModel();
+    private string _title { get; set; } = "Add";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Id = Id ?? "1";
+        Interceptor.RegisterEvent();
+
+        if (Id.Length > 1)
+        {
+            _title = "Edit";
+            _product = await ProductHttpRepository.GetProductById(Id);
+        }  
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id.Length > 1)
+        {
+            await ProductHttpRepository.UpdateProduct(_product);
+        }
+        else
+        {
+            await ProductHttpRepository.CreateProduct(_product);
+        }
+
+        NavigationManager.NavigateTo("/products");
+    }
+
+    private void AssignImageUrl(string imgUrl) 
+    {
+        _product.ImageUrl = imgUrl;
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
+    }
+}

@@ -4,8 +4,7 @@ namespace AgateMountainWarehouse.Domain.Entities;
 
 public class InventorySnapshot : AuditableEntity
 {
-    public Guid InventoryId { get; set; }
-    public Inventory? Inventory { get; set; }
+    public Product Product { get; set; } = null!;
     public DateTime SnapshotTime { get; set; }
     public int SnapshotQuantity { get; set; }
 }

@@ -1,0 +1,17 @@
+﻿<MudItem xs="6">
+    <address>
+        <strong>Payment Status:</strong><br>
+        @(SalesOrder.IsPaid ? "Paid".ToUpper() : "Not Paid".ToUpper())
+    </address>
+</MudItem>
+<MudItem xs="6" Class="d-flex justify-end">
+    <address>
+        <strong>Order Date:</strong><br>
+        @SalesOrder.CreatedDateTime.ToShortDateString()
+    </address>
+</MudItem>
+
+@code {
+    [Parameter]
+    public SalesOrderViewModel SalesOrder { get; set; } = new SalesOrderViewModel();
+}

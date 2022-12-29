@@ -1,0 +1,25 @@
+﻿<MudItem xs="6">
+    <address>
+        <strong>Agate Mountain Jewelry</strong><br>
+        1234 Agate Mountain Dr.<br>
+        Springfield, ST 54321<br>
+        Phoenix, AZ 85004
+    </address>
+</MudItem>
+<MudItem xs="6" Class="d-flex justify-end">
+    <address>
+        <strong>Purchaser:</strong><br>
+        @($"{Customer.FirstName} {Customer.LastName}")<br>
+        @Customer.Address.AddressLine1<br>
+        @if (Customer.Address.AddressLine2 is not null)
+        {
+            <span>@Customer.Address.AddressLine2</span><br>
+        }
+        @($"{Customer.Address.City}, {Customer.Address.State} {Customer.Address.PostalCode}")
+    </address>
+</MudItem>
+
+@code {
+    [Parameter]
+    public CustomerViewModel Customer { get; set; } = new CustomerViewModel();
+}

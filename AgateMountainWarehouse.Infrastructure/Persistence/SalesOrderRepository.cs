@@ -1,6 +1,7 @@
 ﻿using AgateMountainWarehouse.Application.Interfaces;
 using AgateMountainWarehouse.Application.RequestFeatures;
 using AgateMountainWarehouse.Domain.Entities;
+using AgateMountainWarehouse.Infrastructure.RepositoryExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgateMountainWarehouse.Infrastructure.Persistence;
@@ -47,16 +48,22 @@ public class SalesOrderRepository : ISalesOrderRepository
     public async Task<SalesOrder> GetOrderById(Guid orderId)
     {
         return await _context.SalesOrders
+            .Include(so => so.Customer)
+                .ThenInclude(c => c.Address)
             .Include(so => so.OrderItems)
-            .ThenInclude(item => item.Product)
+                .ThenInclude(item => item.Product)
             .FirstOrDefaultAsync(so => so.Id.Equals(orderId));
     }
 
     public async Task<PagedList<SalesOrder>> GetOrders(PagingParameters pagingParameters)
     {
         var orders = await _context.SalesOrders
+            .Include(so => so.Customer)
+                .ThenInclude(c => c.Address)
             .Include(so => so.OrderItems)
-            .ThenInclude(item => item.Product)
+                .ThenInclude(item => item.Product)
+            .Search(pagingParameters.SearchTerm)
+            .Sort(pagingParameters.OrderBy)
             .ToListAsync();
 
         return PagedList<SalesOrder>.ToPagedList(
