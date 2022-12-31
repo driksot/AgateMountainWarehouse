@@ -1,0 +1,50 @@
+﻿@page "/reports/inventories/history/print"
+
+@inject IInventoryHttpRepository InventoryHttpRepository
+@inject IProductHttpRepository ProductHttpRepository
+
+<h3>Print Inventory History</h3>
+
+<MudTable Items="@_snapshotsForTable">
+    <HeaderContent>
+        <MudTh>Product Name</MudTh>
+        @foreach (var header in _headers)
+        {
+            <MudTh>@header</MudTh>
+        }
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ProductName</MudTd>
+        @foreach (var quantity in context.QuantityOnHand)
+        {
+            <MudTd>@quantity</MudTd>
+        }
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private SnapshotResponseViewModel _snapshots = new SnapshotResponseViewModel();
+    private List<SnapshotNameViewModel> _snapshotsForTable = new List<SnapshotNameViewModel>();
+    private List<string> _headers = new List<string>();
+    private ProductViewModel _product = new ProductViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _snapshots = await InventoryHttpRepository.GetSnapshotHistory();
+
+        foreach (var snapshot in _snapshots.InventorySnapshots)
+        {
+            var product = await ProductHttpRepository.GetProductById(snapshot.ProductId.ToString());
+
+            _snapshotsForTable.Add(new SnapshotNameViewModel
+            {
+                ProductName = product.Name,
+                QuantityOnHand = snapshot.QuantityOnHand
+            });
+        }
+
+        _snapshotsForTable.OrderBy(snapshot => snapshot.ProductName);
+
+        _headers = _snapshots.Timeline.Select(time => time.ToString()).Distinct().ToList();
+    }
+}

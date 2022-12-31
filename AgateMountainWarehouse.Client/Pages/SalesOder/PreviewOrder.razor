@@ -43,7 +43,8 @@
             Variant="Variant.Filled"
             Color="Color.Primary"
             StartIcon="@Icons.Material.Filled.Print"
-            IconColor="Color.Surface">
+            IconColor="Color.Surface"
+            Href="@($"orders/print/{_order.Id.ToString()}")">
         Print Invoice
     </MudButton>
 

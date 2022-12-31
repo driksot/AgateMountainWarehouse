@@ -1,0 +1,61 @@
+﻿@layout BlankLayout
+@page "/orders/print/{id}"
+
+@inject IOrderHttpRepository OrderHttpRepository
+
+<body onload="window.print()">
+
+    <MudElement HtmlTag="section" Class="d-flex justify-end mt-2 mb-5">
+
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.ArrowBack"
+                   Color="Color.Secondary"
+                   Class="ms-2"
+                   Href="/orders">
+            Back
+        </MudButton>
+
+    </MudElement>
+
+    <MudCard>
+        <MudCardContent Class="pa-6">
+            <MudGrid>
+
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h5"
+                             Class="card-title fw-bold mb-4"
+                             Color="Color.Primary">@($"Invoice #{_order.Id}")</MudText>
+                </MudItem>
+
+                <AddressLine Customer="_customer" />
+
+                <OrderInfoLine SalesOrder="_order" />
+
+                <OrderSummaryTable ItemList="_orderItems" GrandTotal="_grandTotal" />
+
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+
+</body>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private CustomerViewModel _customer = new CustomerViewModel();
+    private SalesOrderViewModel _order = new SalesOrderViewModel();
+    private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
+    private double _grandTotal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _order = await OrderHttpRepository.GetOrderById(Id);
+
+        foreach (var item in _order.OrderItems)
+        {
+            _orderItems.Add(item);
+            _grandTotal += item.Quantity * item.Product.Price;
+        }
+    }
+}

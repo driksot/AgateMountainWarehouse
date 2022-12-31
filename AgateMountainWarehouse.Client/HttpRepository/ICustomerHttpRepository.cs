@@ -10,5 +10,5 @@ public interface ICustomerHttpRepository
     Task<CustomerViewModel> GetCustomerById(string customerId);
     Task CreateCustomer(CustomerViewModel customer);
     Task UpdateCustomer(CustomerViewModel customer);
-    Task DeleteCustomer(Guid id);
+    Task ArchiveCustomer(Guid id);
 }

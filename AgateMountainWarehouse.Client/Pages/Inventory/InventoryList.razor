@@ -34,7 +34,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Image">
-            <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.Product?.ImageUrl" />
+                <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@($"{APIEndpoints._serverBaseUrl}{@context.Product?.ImageUrl}")" />
         </MudTd>
         <MudTd DataLabel="Name">@context.Product?.Name</MudTd>
         <MudTd DataLabel="Price">@context.Product?.Price.ToString("c")</MudTd>
@@ -42,7 +42,7 @@
     </RowTemplate>
     <RowEditingTemplate>
         <MudTd DataLabel="Image">
-            <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@context.Product?.ImageUrl" />
+                <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="@($"{APIEndpoints._serverBaseUrl}{@context.Product?.ImageUrl}")" />
         </MudTd>
         <MudTd DataLabel="Name">@context.Product?.Name</MudTd>
         <MudTd DataLabel="Price">@context.Product?.Price.ToString("c")</MudTd>

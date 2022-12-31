@@ -46,19 +46,6 @@ public class ProductHttpRepository : IProductHttpRepository
         }
     }
 
-    public async Task DeleteProduct(Guid id)
-    {
-        var url = Path.Combine(APIEndpoints._products, id.ToString());
-
-        var deleteResult = await _httpClient.DeleteAsync(url);
-        var deleteContent = await deleteResult.Content.ReadAsStringAsync();
-
-        if (!deleteResult.IsSuccessStatusCode)
-        {
-            throw new ApplicationException(deleteContent);
-        }
-    }
-
     public async Task<ProductViewModel> GetProductById(string id)
     {
         var url = Path.Combine(APIEndpoints._products, id);

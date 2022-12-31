@@ -1,4 +1,4 @@
-﻿@page "/inventories/history"
+﻿@page "/reports/inventories/history"
 
 @inject IInventoryHttpRepository InventoryHttpRepository
 @inject IProductHttpRepository ProductHttpRepository
@@ -13,6 +13,21 @@
     ChartOptions="@_options"
     Width="100%" 
     Height="350px"></MudChart>
+
+<MudSpacer />
+
+<MudElement HtmlTag="section" Class="d-flex justify-center">
+
+    <MudButton DisableElevation
+               Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.Print"
+               IconColor="Color.Surface"
+               Href="reports/inventories/history/print">
+        Print Invoice History
+    </MudButton>
+
+</MudElement>
 
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.

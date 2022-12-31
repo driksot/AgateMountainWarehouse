@@ -3,6 +3,7 @@
 @inject IOrderHttpRepository OrderHttpRepository
 @inject IProductHttpRepository ProductHttpRepository
 @inject IInventoryHttpRepository InventoryHttpRepository
+@inject ICustomerHttpRepository CustomerHttpRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
@@ -91,7 +92,8 @@ else
     private string _navUrl = "/orders";
 
     public List<ProductViewModel> Products = new List<ProductViewModel>();
-    public PagingMetaData MetaData { get; set; } = new PagingMetaData();
+    public PagingMetaData ProductMetaData { get; set; } = new PagingMetaData();
+    public PagingMetaData CustomerMetaData { get; set; } = new PagingMetaData();
     private PagingParameters _pagingParameters = new PagingParameters();
 
     protected override async Task OnInitializedAsync()
@@ -107,7 +109,7 @@ else
     {
         var pagingResponse = await ProductHttpRepository.GetProducts(_pagingParameters);
         Products = pagingResponse.Items;
-        MetaData = pagingResponse.MetaData;
+        ProductMetaData = pagingResponse.MetaData;
 
         foreach (var prod in Products)
         {
@@ -119,6 +121,15 @@ else
 
             _orderItems.Add(item);
         }
+
+        await GetCustomers();
+    }
+
+    private async Task GetCustomers()
+    {
+        var pagingResponse = await CustomerHttpRepository.GetCustomers(_pagingParameters);
+        _customers = pagingResponse.Items;
+        CustomerMetaData = pagingResponse.MetaData;
     }
 
     private async Task HandleValidSubmit()
@@ -146,7 +157,6 @@ else
             if (_selectedOrderItem.Id == item.Id) 
             {
                 itemExists = true;
-                item.Quantity += _selectedOrderItem.Quantity;
             }
         }
 
@@ -168,6 +178,7 @@ else
         _order.OrderItems = _selectedOrderItems;
         _order.TotalCost = totalCost;
         _order.Customer = _selectedCustomer;
+        _order.CustomerId = _selectedCustomer.Id;
 
         await OrderHttpRepository.GenerateOrder(_order);
         _notification.Show();

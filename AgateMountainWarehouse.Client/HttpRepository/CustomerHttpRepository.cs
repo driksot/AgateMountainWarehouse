@@ -19,6 +19,19 @@ public class CustomerHttpRepository : ICustomerHttpRepository
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
+    public async Task ArchiveCustomer(Guid id)
+    {
+        var url = Path.Combine(APIEndpoints._customers, id.ToString());
+
+        var patchResult = await _httpClient.PatchAsync(url, null);
+        var patchContent = await patchResult.Content.ReadAsStringAsync();
+
+        if (!patchResult.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(patchContent);
+        }
+    }
+
     public async Task CreateCustomer(CustomerViewModel customer)
     {
         var content = JsonSerializer.Serialize(customer);

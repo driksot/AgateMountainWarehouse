@@ -4,6 +4,7 @@
 
 @inject ICustomerHttpRepository CustomerHttpRepository
 @inject HttpInterceptorService Interceptor
+@inject IDialogService DialogService
 
 <MudText Typo="Typo.h4" Class="card-title fw-bold mb-4" Color="Color.Primary">@("Customer Management".ToUpper())</MudText>
 
@@ -41,7 +42,7 @@
             <MudTd DataLabel="Since">@context.CreatedDateTime.ToShortDateString()</MudTd>
             <MudTd DataLabel="Actions">
                 <MudButton Href="@($"customer/edit/{context.Id}")" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Class="ms-1 my-1">Edit</MudButton>
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="ms-1 my-1">Delete</MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Archive" Color="Color.Error" Class="ms-1 my-1" @onclick="@(() => ArchiveCustomer(context.Id))">Archive</MudButton>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>
@@ -55,7 +56,7 @@
         </PagerContent>
     </MudTable>
 
-@code {
+    @code {
     private IEnumerable<CustomerViewModel> _customers = new List<CustomerViewModel>();
     private MudTable<CustomerViewModel> _table = new MudTable<CustomerViewModel>();
     private PagingParameters _pagingParameters = new PagingParameters();
@@ -93,7 +94,7 @@
         }
 
         var pagingResponse = await CustomerHttpRepository.GetCustomers(_pagingParameters);
-        _customers = pagingResponse.Items;
+        _customers = pagingResponse.Items.Where(customer => !customer.IsArchived);
         MetaData = pagingResponse.MetaData;
 
         return new TableData<CustomerViewModel>() { TotalItems = MetaData.TotalCount, Items = _customers };
@@ -108,5 +109,24 @@
     public void Dispose()
     {
         Interceptor.DisposeEvent();
+    }
+
+    private async Task ArchiveCustomer(Guid id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to archive this customer record?");
+        parameters.Add("ButtonText", "Archive");
+        parameters.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialog = await DialogService.ShowAsync<ArchiveDialog>("Archive", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await CustomerHttpRepository.ArchiveCustomer(id);
+            await _table.ReloadServerData();
+        }
     }
 }
