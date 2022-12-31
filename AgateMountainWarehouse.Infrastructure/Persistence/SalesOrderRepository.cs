@@ -28,7 +28,7 @@ public class SalesOrderRepository : ISalesOrderRepository
     {
         foreach (var item in order.OrderItems)
         {
-            item.Product = await _productRepository.GetProductById(item.Id);
+            item.Product = await _productRepository.GetProductById(item.Product.Id);
 
             _price += (item.Product.Price * item.Quantity);
 

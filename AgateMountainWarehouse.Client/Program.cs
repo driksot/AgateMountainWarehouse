@@ -27,6 +27,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
     builder.Services.AddScoped<IInventoryHttpRepository, InventoryHttpRepository>();
     builder.Services.AddScoped<IOrderHttpRepository, OrderHttpRepository>();
     builder.Services.AddScoped<ICustomerHttpRepository, CustomerHttpRepository>();
+    builder.Services.AddScoped<IInvoiceHttpRepository, InvoiceHttpRepository>();
     builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
     builder.Services.AddBlazoredLocalStorage();

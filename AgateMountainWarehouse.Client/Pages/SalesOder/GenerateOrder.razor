@@ -4,6 +4,7 @@
 @inject IProductHttpRepository ProductHttpRepository
 @inject IInventoryHttpRepository InventoryHttpRepository
 @inject ICustomerHttpRepository CustomerHttpRepository
+@inject IInvoiceHttpRepository InvoiceHttpRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
@@ -78,6 +79,13 @@ else
 
 <OrderItemTable ItemList="_selectedOrderItems" />
 
+<ul>
+    @foreach (var item in _selectedOrderItems)
+    {
+        <li>@item.Product.Name - @item.Quantity</li>
+    }
+</ul>
+
 <SuccessNotification @ref="_notification" NavUrl="@_navUrl" />
 
 @code {
@@ -85,6 +93,7 @@ else
     private List<SalesOrderItemViewModel> _orderItems = new List<SalesOrderItemViewModel>();
     private List<CustomerViewModel> _customers = new List<CustomerViewModel>();
     private List<SalesOrderItemViewModel> _selectedOrderItems = new List<SalesOrderItemViewModel>();
+    private List<LineItemViewModel> _invoiceItems = new List<LineItemViewModel>();
     private SalesOrderItemViewModel _selectedOrderItem = new SalesOrderItemViewModel();
     private CustomerViewModel _selectedCustomer = new CustomerViewModel();
     private InventoryViewModel _selectedInventory = new InventoryViewModel();
@@ -177,7 +186,6 @@ else
 
         _order.OrderItems = _selectedOrderItems;
         _order.TotalCost = totalCost;
-        _order.Customer = _selectedCustomer;
         _order.CustomerId = _selectedCustomer.Id;
 
         await OrderHttpRepository.GenerateOrder(_order);

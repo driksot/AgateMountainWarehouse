@@ -1,6 +1,8 @@
 ﻿@page "/order/preview/{id}"
 
 @inject IOrderHttpRepository OrderHttpRepository
+@inject ICustomerHttpRepository CustomerHttpRepository
+@inject IJSRuntime JSRuntime
 
 <MudElement HtmlTag="section" Class="d-flex justify-end mt-2 mb-5">
 
@@ -44,13 +46,13 @@
             Color="Color.Primary"
             StartIcon="@Icons.Material.Filled.Print"
             IconColor="Color.Surface"
-            Href="@($"orders/print/{_order.Id.ToString()}")">
+            @onclick="@(() => PrintInvoice(_order.Id.ToString()))">
         Print Invoice
     </MudButton>
 
 </MudElement>
 
-@code {
+    @code {
     [Parameter]
     public string Id { get; set; } = string.Empty;
 
@@ -63,10 +65,17 @@
     {
         _order = await OrderHttpRepository.GetOrderById(Id);
 
+        _customer = await CustomerHttpRepository.GetCustomerById(_order.CustomerId.ToString());
+
         foreach (var item in _order.OrderItems)
         {
             _orderItems.Add(item);
             _grandTotal += item.Quantity * item.Product.Price;
         }
+    }
+
+    public async Task PrintInvoice(string id)
+    {
+        await JSRuntime.InvokeAsync<object>("open", new object[] { $"/orders/print/{id}", "_blank" });
     }
 }

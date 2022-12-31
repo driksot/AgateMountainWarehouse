@@ -2,20 +2,11 @@
 @page "/orders/print/{id}"
 
 @inject IOrderHttpRepository OrderHttpRepository
+@inject ICustomerHttpRepository CustomerHttpRepository
+
+<PageTitle>Invoice Print Out</PageTitle>
 
 <body onload="window.print()">
-
-    <MudElement HtmlTag="section" Class="d-flex justify-end mt-2 mb-5">
-
-        <MudButton Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.ArrowBack"
-                   Color="Color.Secondary"
-                   Class="ms-2"
-                   Href="/orders">
-            Back
-        </MudButton>
-
-    </MudElement>
 
     <MudCard>
         <MudCardContent Class="pa-6">
@@ -39,7 +30,7 @@
 
 </body>
 
-@code {
+    @code {
     [Parameter]
     public string Id { get; set; } = string.Empty;
 
@@ -51,6 +42,8 @@
     protected override async Task OnInitializedAsync()
     {
         _order = await OrderHttpRepository.GetOrderById(Id);
+
+        _customer = await CustomerHttpRepository.GetCustomerById(_order.CustomerId.ToString());
 
         foreach (var item in _order.OrderItems)
         {
